@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Banner, BrandMark, Button } from '../../../shared/ui'
 import { cx } from '../../../shared/lib'
 import { ItemsList } from '../../../widgets/items-list'
@@ -55,24 +56,29 @@ export function DashboardPage() {
 
         {tab === 'items' ? (
           <>
-            <Banner
-              tone="info"
-              icon={
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.9"
-                >
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 8v8M8 12h8" />
-                </svg>
-              }
+            <Link
+              to="/exchange/c1"
+              className="rounded-2xl outline-offset-2 focus-visible:outline-2 focus-visible:outline-brand"
             >
-              <b className="font-bold">1 новое предложение</b> — цепочка на 4 человека
-            </Banner>
+              <Banner
+                tone="info"
+                icon={
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.9"
+                  >
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 8v8M8 12h8" />
+                  </svg>
+                }
+              >
+                <b className="font-bold">1 новое предложение</b> — цепочка на 4 человека
+              </Banner>
+            </Link>
             <ItemsList />
           </>
         ) : (
