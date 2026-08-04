@@ -27,7 +27,8 @@ LSP в редакторе иногда ложно не резолвит зави
 - **FSD, импорты только вниз:** `app → pages → widgets → features → entities → shared`. Слайсы одного
   слоя друг друга не импортят; наружу — через `index.ts` (public API). Сегменты: `ui / model / api / lib`.
 - **`shared/ui` готов:** `BrandMark` (лого-точки), `Button` (primary/dark/secondary/ghost/danger, fullWidth),
-  `Chip` (wait/ok/stop/frozen/brand, dot), `Card` (padded), `Field`+`Input`, `Banner` (info/ok/stop).
+  `Chip` (wait/ok/stop/frozen/brand, dot), `Card` (padded), `Field`+`Input`, `Banner` (info/ok/stop),
+  иконки (`IconCheck`/`IconClock`/`IconClose`/`IconPlus`/`IconArrowRight`/`IconChevronLeft`/`IconBox`).
   Хелпер склейки классов — `shared/lib/cx`. Провайдеры — `app/providers.tsx` (QueryClientProvider).
 - `verbatimModuleSyntax` включён — импорт типов только через `import type`.
 - **Данные — только через TanStack Query.** Запросы в `entities/*/api`, компоненты берут их через
