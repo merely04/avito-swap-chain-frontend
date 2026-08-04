@@ -19,10 +19,10 @@ export interface Neighbours {
   giver: ChainParticipant
 }
 
-/** Соседи по кругу обмена. `null`, если текущего пользователя нет в цепочке. */
-export function findNeighbours(chain: Chain): Neighbours | null {
+/** Соседи по кругу обмена. `undefined`, если текущего пользователя нет в цепочке. */
+export function findNeighbours(chain: Chain): Neighbours | undefined {
   const index = chain.participants.findIndex((p) => p.isMe)
-  if (index === -1) return null
+  if (index === -1) return undefined
 
   const total = chain.participants.length
   return {

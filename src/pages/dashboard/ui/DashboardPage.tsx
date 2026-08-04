@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Banner, BrandMark, Button } from '../../../shared/ui'
-import { cx } from '../../../shared/lib'
-import { ItemsList } from '../../../widgets/items-list'
+import { Banner, BrandMark, Button } from '@/shared/ui'
+import { cx } from '@/shared/lib'
+import { ItemsList } from '@/widgets/items-list'
 
 type Tab = 'items' | 'wishes' | 'exchanges'
 

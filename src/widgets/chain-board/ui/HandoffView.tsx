@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
-import { ExchangeSummary } from '../../../entities/chain'
-import { ConfirmReceipt } from '../../../features/confirm-receipt'
-import { Banner, IconCheck } from '../../../shared/ui'
+import { ExchangeSummary } from '@/entities/chain'
+import { ConfirmReceipt } from '@/features/confirm-receipt'
+import { Banner, IconCheck } from '@/shared/ui'
 import type { ChainViewProps } from '../model/types'
+import { BoardFooter } from './BoardFooter'
 
 /** ACTIVE: все подтвердили — остались шаги передачи вещей. */
 export function HandoffView({ chain, me, neighbours }: ChainViewProps) {
@@ -43,9 +44,9 @@ export function HandoffView({ chain, me, neighbours }: ChainViewProps) {
         Когда все отметят передачу — цепочка закроется, обмен завершится.
       </p>
 
-      <div className="mt-auto pt-2">
+      <BoardFooter>
         <ConfirmReceipt chainId={chain.id} />
-      </div>
+      </BoardFooter>
     </>
   )
 }

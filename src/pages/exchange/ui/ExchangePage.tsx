@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
-import { chainKeys, DealStatusChip, getChain } from '../../../entities/chain'
-import { IconChevronLeft } from '../../../shared/ui'
-import { ChainBoard } from '../../../widgets/chain-board'
+import { chainKeys, DealStatusChip, getChain } from '@/entities/chain'
+import { IconChevronLeft } from '@/shared/ui'
+import { ChainBoard } from '@/widgets/chain-board'
 
 /**
  * Один роут на всю сделку: предложение, ожидание, передача, завершение и распад —
@@ -36,13 +36,13 @@ export function ExchangePage() {
         {chain && <DealStatusChip chain={chain} />}
       </header>
 
-      <div className="flex flex-1 flex-col gap-3.5 p-4">
+      <main className="flex flex-1 flex-col p-4">
         {isPending && <p className="py-10 text-center text-sm text-ink-3">Загрузка…</p>}
         {isError && (
           <p className="py-10 text-center text-sm text-stop">Не удалось загрузить цепочку</p>
         )}
         {chain && <ChainBoard chain={chain} />}
-      </div>
+      </main>
     </div>
   )
 }

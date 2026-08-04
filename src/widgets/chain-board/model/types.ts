@@ -1,4 +1,4 @@
-import type { Chain, ChainParticipant, Neighbours } from '../../../entities/chain'
+import type { Chain, ChainParticipant, Neighbours } from '@/entities/chain'
 
 /** Данные, общие для всех под-видов доски цепочки. */
 export interface ChainViewProps {

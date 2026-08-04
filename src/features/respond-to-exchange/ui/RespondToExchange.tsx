@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { chainKeys, respondToChain, type ChainDecision } from '../../../entities/chain'
-import { Button } from '../../../shared/ui'
+import { chainKeys, respondToChain, type ChainDecision } from '@/entities/chain'
+import { Button } from '@/shared/ui'
 
 /** Ответ на предложение обмена: подтвердить участие или отклонить. */
 export function RespondToExchange({ chainId }: { chainId: string }) {

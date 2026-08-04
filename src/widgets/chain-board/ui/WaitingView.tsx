@@ -1,7 +1,8 @@
-import { countConfirmed, ExchangeSummary, ParticipantStatusList } from '../../../entities/chain'
-import { LeaveChain } from '../../../features/leave-chain'
-import { Banner, IconCheck } from '../../../shared/ui'
+import { countConfirmed, ExchangeSummary, ParticipantStatusList } from '@/entities/chain'
+import { LeaveChain } from '@/features/leave-chain'
+import { Banner, IconCheck } from '@/shared/ui'
 import type { ChainViewProps } from '../model/types'
+import { BoardFooter } from './BoardFooter'
 
 /** FORMED + я CONFIRMED: ход не за мной — ждём остальных участников. */
 export function WaitingView({ chain, me, neighbours }: ChainViewProps) {
@@ -40,12 +41,12 @@ export function WaitingView({ chain, me, neighbours }: ChainViewProps) {
 
       <ParticipantStatusList participants={chain.participants} />
 
-      <div className="mt-auto flex flex-col gap-2.5 pt-2">
+      <BoardFooter>
         <p className="text-center text-[12.5px] text-ink-2">
           Пока обмен не запущен, вы можете выйти без последствий.
         </p>
         <LeaveChain chainId={chain.id} />
-      </div>
+      </BoardFooter>
     </>
   )
 }

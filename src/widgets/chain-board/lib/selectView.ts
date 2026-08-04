@@ -1,4 +1,4 @@
-import { findMe, type Chain } from '../../../entities/chain'
+import { findMe, type Chain } from '@/entities/chain'
 
 export type ChainView = 'offer' | 'waiting' | 'handoff' | 'completed' | 'dissolved'
 

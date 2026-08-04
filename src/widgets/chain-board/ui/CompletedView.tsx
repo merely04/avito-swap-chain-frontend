@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { ExchangeSummary } from '../../../entities/chain'
-import { Banner, Button, IconCheck } from '../../../shared/ui'
+import { ExchangeSummary } from '@/entities/chain'
+import { Banner, Button, IconCheck } from '@/shared/ui'
 import type { ChainViewProps } from '../model/types'
+import { BoardFooter } from './BoardFooter'
 
 /** COMPLETED: все передали и подтвердили получение — цепочка закрыта. */
 export function CompletedView({ me, neighbours }: ChainViewProps) {
@@ -20,11 +21,11 @@ export function CompletedView({ me, neighbours }: ChainViewProps) {
         списке ваших вещей.
       </p>
 
-      <div className="mt-auto pt-2">
+      <BoardFooter>
         <Button fullWidth onClick={() => navigate('/')}>
           К моим вещам
         </Button>
-      </div>
+      </BoardFooter>
     </>
   )
 }

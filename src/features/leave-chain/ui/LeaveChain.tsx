@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { chainKeys, leaveChain } from '../../../entities/chain'
-import { Button } from '../../../shared/ui'
+import { chainKeys, leaveChain } from '@/entities/chain'
+import { Button } from '@/shared/ui'
 
 /** Выход из цепочки до общего подтверждения — без штрафа (гипотеза H5). */
 export function LeaveChain({ chainId }: { chainId: string }) {

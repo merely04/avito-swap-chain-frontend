@@ -1,9 +1,18 @@
-import { cx } from '../../../shared/lib'
+import { cx } from '@/shared/lib'
 import type { ChainParticipant } from '../model/types'
 
 const BOX = { width: 280, height: 290 }
 const CENTER = { x: 140, y: 138 }
 const RADIUS = 88
+
+/** Точка на кольце по углу в градусах: 0° — справа, −90° — сверху. */
+function pointAt(degrees: number) {
+  const radians = (degrees * Math.PI) / 180
+  return {
+    x: CENTER.x + RADIUS * Math.cos(radians),
+    y: CENTER.y + RADIUS * Math.sin(radians),
+  }
+}
 
 /**
  * Кольцо участников: каждый отдаёт вещь соседу по часовой стрелке.
@@ -14,12 +23,15 @@ export function ChainRing({ participants }: { participants: ChainParticipant[] }
   const ordered =
     meIndex > 0 ? [...participants.slice(meIndex), ...participants.slice(0, meIndex)] : participants
 
+  const step = 360 / ordered.length
+  const angleOf = (index: number) => -90 + step * index
+
   return (
-    <div className="relative mx-auto h-[290px] w-[280px]">
+    <div className="relative mx-auto" style={{ width: BOX.width, height: BOX.height }}>
       <svg
         width={BOX.width}
         height={BOX.height}
-        viewBox="0 0 280 290"
+        viewBox={`0 0 ${BOX.width} ${BOX.height}`}
         className="absolute inset-0"
         aria-hidden="true"
       >
@@ -34,10 +46,8 @@ export function ChainRing({ participants }: { participants: ChainParticipant[] }
           className="stroke-line"
         />
         {ordered.map((p, index) => {
-          const degrees = -90 + (360 / ordered.length) * (index + 0.5)
-          const radians = (degrees * Math.PI) / 180
-          const x = CENTER.x + RADIUS * Math.cos(radians)
-          const y = CENTER.y + RADIUS * Math.sin(radians)
+          const degrees = angleOf(index) + step / 2
+          const { x, y } = pointAt(degrees)
 
           return (
             <polygon
@@ -51,15 +61,13 @@ export function ChainRing({ participants }: { participants: ChainParticipant[] }
       </svg>
 
       {ordered.map((p, index) => {
-        const angle = -Math.PI / 2 + (index * 2 * Math.PI) / ordered.length
+        const { x, y } = pointAt(angleOf(index))
+
         return (
           <div
             key={p.userId}
             className="absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5"
-            style={{
-              left: CENTER.x + RADIUS * Math.cos(angle),
-              top: CENTER.y + RADIUS * Math.sin(angle),
-            }}
+            style={{ left: x, top: y }}
           >
             <span
               className={cx(

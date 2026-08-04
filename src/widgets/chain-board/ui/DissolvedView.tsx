@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { findDecliner } from '../../../entities/chain'
-import { Banner, Button, IconCheck, IconClose } from '../../../shared/ui'
+import { findDecliner } from '@/entities/chain'
+import { Banner, Button, IconCheck, IconClose } from '@/shared/ui'
 import type { ChainViewProps } from '../model/types'
+import { BoardFooter } from './BoardFooter'
 
 /** DISSOLVED: кто-то отказался — обмен не стартовал, вещи разблокированы. */
 export function DissolvedView({ chain, me }: ChainViewProps) {
@@ -29,11 +30,11 @@ export function DissolvedView({ chain, me }: ChainViewProps) {
         новую цепочку.
       </p>
 
-      <div className="mt-auto pt-2">
+      <BoardFooter>
         <Button fullWidth onClick={() => navigate('/')}>
           Искать новую цепочку
         </Button>
-      </div>
+      </BoardFooter>
     </>
   )
 }

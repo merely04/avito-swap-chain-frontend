@@ -1,6 +1,7 @@
-import { ChainRing, ExchangeSummary, ParticipantStatusList } from '../../../entities/chain'
-import { RespondToExchange } from '../../../features/respond-to-exchange'
+import { ChainRing, ExchangeSummary, ParticipantStatusList } from '@/entities/chain'
+import { RespondToExchange } from '@/features/respond-to-exchange'
 import type { ChainViewProps } from '../model/types'
+import { BoardFooter } from './BoardFooter'
 
 /** FORMED + я PENDING: предложение обмена, от меня ждут решения. */
 export function OfferView({ chain, me, neighbours }: ChainViewProps) {
@@ -15,12 +16,12 @@ export function OfferView({ chain, me, neighbours }: ChainViewProps) {
 
       <ParticipantStatusList participants={chain.participants} />
 
-      <div className="mt-auto flex flex-col gap-2.5 pt-2">
+      <BoardFooter>
         <p className="text-center text-[12.5px] text-ink-2">
           Обмен состоится, только когда подтвердят все. До этого вещь остаётся у вас.
         </p>
         <RespondToExchange chainId={chain.id} />
-      </div>
+      </BoardFooter>
     </>
   )
 }

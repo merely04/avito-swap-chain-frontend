@@ -1,10 +1,11 @@
-import { cx } from '../../../shared/lib'
-import { IconCheck, IconClock, IconClose, IconPlus } from '../../../shared/ui'
+import type { ComponentType } from 'react'
+import { cx } from '@/shared/lib'
+import { IconCheck, IconClock, IconClose, IconPlus } from '@/shared/ui'
 import type { ChainParticipant, ParticipantStatus } from '../model/types'
 
 const STATUS_VIEW: Record<
   ParticipantStatus,
-  { badge: string; label: string; myLabel: string; Icon: typeof IconCheck }
+  { badge: string; label: string; myLabel: string; Icon: ComponentType<{ size?: number }> }
 > = {
   confirmed: {
     badge: 'bg-ok-bg text-ok',

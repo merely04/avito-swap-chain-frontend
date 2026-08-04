@@ -26,6 +26,7 @@ LSP в редакторе иногда ложно не резолвит зави
   не использовать — только через токены. **Тема только светлая** (`color-scheme: light`), как веб Avito.
 - **FSD, импорты только вниз:** `app → pages → widgets → features → entities → shared`. Слайсы одного
   слоя друг друга не импортят; наружу — через `index.ts` (public API). Сегменты: `ui / model / api / lib`.
+  Между слоями импорт через алиас `@/` (`@/entities/chain`), внутри слайса — относительный (`../model/types`).
 - **`shared/ui` готов:** `BrandMark` (лого-точки), `Button` (primary/dark/secondary/ghost/danger, fullWidth),
   `Chip` (wait/ok/stop/frozen/brand, dot), `Card` (padded), `Field`+`Input`, `Banner` (info/ok/stop),
   иконки (`IconCheck`/`IconClock`/`IconClose`/`IconPlus`/`IconArrowRight`/`IconChevronLeft`/`IconBox`).

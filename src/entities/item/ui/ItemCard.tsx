@@ -1,4 +1,4 @@
-import { Card, Chip } from '../../../shared/ui'
+import { Card, Chip } from '@/shared/ui'
 import type { Item, ItemStatus } from '../model/types'
 
 const CONDITION_LABEL: Record<Item['condition'], string> = {

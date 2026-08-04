@@ -1,4 +1,4 @@
-import { Chip } from '../../../shared/ui'
+import { Chip } from '@/shared/ui'
 import { countConfirmed } from '../lib/participants'
 import type { Chain } from '../model/types'
 
