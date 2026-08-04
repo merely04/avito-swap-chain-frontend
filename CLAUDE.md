@@ -12,19 +12,30 @@ pnpm · Vite · **React 19** · TypeScript **strict** · **TanStack Query** (с�
 
 ## Команды
 
+Пакетный менеджер — **corepack pnpm 11** (закреплён в `packageManager`; не `npm`/`npx`).
 `pnpm dev` · `pnpm build` · `pnpm lint` (oxlint) · `pnpm format` (prettier).
+
+**Автопроверки (хуки `.claude/settings.json`):** после каждого Edit/Write Prettier форматит изменённый
+`.ts/.tsx/.css`; при завершении работы прогоняется `tsc -b` и блокирует финиш при ошибках типов.
+LSP в редакторе иногда ложно не резолвит зависимости — авторитетна сборка `pnpm build`, не LSP.
 
 ## Конвенции
 
 - **Стили — только Tailwind-утилиты на токенах Avito.** Токены заданы в `@theme` (`src/index.css`):
   `bg-brand` (#00AAFF), `text-ink`, `border-line`, `rounded-btn`, `shadow-card` и т.д. Хардкод цветов
-  не использовать — только через токены. Тёмная тема — переопределением переменных под `prefers-color-scheme`.
+  не использовать — только через токены. **Тема только светлая** (`color-scheme: light`), как веб Avito.
 - **FSD, импорты только вниз:** `app → pages → widgets → features → entities → shared`. Слайсы одного
   слоя друг друга не импортят; наружу — через `index.ts` (public API). Сегменты: `ui / model / api / lib`.
-- **`shared/ui` готов:** `Button` (primary/secondary/ghost/danger, fullWidth), `Chip`
-  (wait/ok/stop/frozen/brand, dot), `Card` (padded), `Field`+`Input`, `Banner` (info/ok/stop).
+- **`shared/ui` готов:** `BrandMark` (лого-точки), `Button` (primary/dark/secondary/ghost/danger, fullWidth),
+  `Chip` (wait/ok/stop/frozen/brand, dot), `Card` (padded), `Field`+`Input`, `Banner` (info/ok/stop).
   Хелпер склейки классов — `shared/lib/cx`. Провайдеры — `app/providers.tsx` (QueryClientProvider).
 - `verbatimModuleSyntax` включён — импорт типов только через `import type`.
+- **Данные — только через TanStack Query.** Запросы в `entities/*/api`, компоненты берут их через
+  `useQuery`/`useMutation`; `fetch` в компонентах не вызывать. Пока бэкенда нет — мок-функции в `api`
+  (напр. `entities/item/api/itemsApi`), позже меняются на реальные вызовы Go-API без правок компонентов.
+- **Коммиты — Conventional Commits** (`feat:`/`fix:`/`chore:`/`refactor:`), под своим GitHub-аккаунтом
+  с настоящим именем (атрибуция вклада — требование хакатона).
+- **Тесты — Vitest**, юнит на важной логике (машина состояний цепочки, подбор, статус-маппинги).
 
 ## Ключевое архитектурное решение
 
