@@ -4,6 +4,7 @@ import { BrandMark, Button } from '@/shared/ui'
 import { cx } from '@/shared/lib'
 import { DealsList, PendingDealBanner } from '@/widgets/deals-list'
 import { ItemsList } from '@/widgets/items-list'
+import { WishesList } from '@/widgets/wishes-list'
 
 type Tab = 'items' | 'wishes' | 'exchanges'
 
@@ -62,8 +63,8 @@ export function DashboardPage() {
             <ItemsList />
           </>
         )}
+        {tab === 'wishes' && <WishesList />}
         {tab === 'exchanges' && <DealsList />}
-        {tab === 'wishes' && <p className="py-10 text-center text-sm text-ink-3">Скоро</p>}
       </div>
 
       <div className="mt-auto p-4">
