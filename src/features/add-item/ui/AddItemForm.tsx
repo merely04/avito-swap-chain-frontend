@@ -26,7 +26,11 @@ export function AddItemForm({ initial, onSubmit }: AddItemFormProps) {
 
   const pickPhoto = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (file) patch({ photoUrl: URL.createObjectURL(file) })
+    if (!file) return
+
+    // Ссылку на прежнее фото освобождаем, иначе замена фото копит их в памяти.
+    if (values.photoUrl) URL.revokeObjectURL(values.photoUrl)
+    patch({ photoUrl: URL.createObjectURL(file) })
   }
 
   const submit = (event: SubmitEvent<HTMLFormElement>) => {
