@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import { getMyItems, ItemCard } from '@/entities/item'
+import { getMyItems, ItemCard, itemKeys } from '@/entities/item'
 
 export function ItemsList() {
   const { data, isPending, isError } = useQuery({
-    queryKey: ['my-items'],
+    queryKey: itemKeys.my(),
     queryFn: getMyItems,
   })
 

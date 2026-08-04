@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Banner, BrandMark, Button } from '@/shared/ui'
 import { cx } from '@/shared/lib'
 import { ItemsList } from '@/widgets/items-list'
@@ -14,6 +14,7 @@ const TABS: { key: Tab; label: string }[] = [
 
 export function DashboardPage() {
   const [tab, setTab] = useState<Tab>('items')
+  const navigate = useNavigate()
 
   return (
     <div className="mx-auto flex min-h-svh max-w-md flex-col bg-card">
@@ -87,7 +88,9 @@ export function DashboardPage() {
       </div>
 
       <div className="mt-auto p-4">
-        <Button fullWidth>Добавить вещь</Button>
+        <Button fullWidth onClick={() => navigate('/items/new')}>
+          Добавить вещь
+        </Button>
       </div>
     </div>
   )
