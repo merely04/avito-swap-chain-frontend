@@ -8,6 +8,7 @@
 - **Vite** — сборка и dev-сервер
 - **TanStack Query** — серверное состояние (запросы к Go-бэкенду)
 - **Zustand** — клиентское состояние
+- **Tailwind v4** — стилизация; токены в стиле Avito в `@theme` (`src/index.css`)
 - **oxlint** — линтер, **Prettier** — форматирование
 - Структура — Feature-Sliced Design (`app / pages / widgets / features / entities / shared`)
 
