@@ -4,6 +4,10 @@ import type { Chain, ChainParticipant } from '../model/types'
 export const findMe = (chain: Chain): ChainParticipant | undefined =>
   chain.participants.find((p) => p.isMe)
 
+/** Ход за пользователем: цепочка не поедет, пока он не ответит. */
+export const needsMyAction = (chain: Chain): boolean =>
+  chain.status === 'formed' && findMe(chain)?.status === 'pending'
+
 /** Сколько участников уже подтвердили участие — числитель прогресса «N из M». */
 export const countConfirmed = (chain: Chain): number =>
   chain.participants.filter((p) => p.status === 'confirmed').length
