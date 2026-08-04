@@ -7,7 +7,7 @@ export function ConfirmReceipt({ chainId }: { chainId: string }) {
   const queryClient = useQueryClient()
   const { mutate, isPending } = useMutation({
     mutationFn: () => confirmReceipt(chainId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: chainKeys.detail(chainId) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: chainKeys.all }),
   })
 
   return (

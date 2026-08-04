@@ -1,9 +1,13 @@
 import type { Chain, ParticipantStatus } from '../model/types'
 
-/** Ключи кэша TanStack Query для цепочек. */
+/**
+ * Ключи кэша TanStack Query. Иерархия не случайна: `my` — префикс `detail`,
+ * поэтому инвалидация `all` после действия обновляет и цепочку, и список обменов.
+ */
 export const chainKeys = {
-  my: () => ['chains'] as const,
-  detail: (id: string) => ['chain', id] as const,
+  all: ['chains'] as const,
+  my: () => chainKeys.all,
+  detail: (id: string) => [...chainKeys.all, id] as const,
 }
 
 /** Ответ участника на предложение обмена. */

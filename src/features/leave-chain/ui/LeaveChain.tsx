@@ -7,7 +7,7 @@ export function LeaveChain({ chainId }: { chainId: string }) {
   const queryClient = useQueryClient()
   const { mutate, isPending } = useMutation({
     mutationFn: () => leaveChain(chainId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: chainKeys.detail(chainId) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: chainKeys.all }),
   })
 
   return (

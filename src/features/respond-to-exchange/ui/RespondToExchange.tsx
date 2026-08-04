@@ -7,7 +7,7 @@ export function RespondToExchange({ chainId }: { chainId: string }) {
   const queryClient = useQueryClient()
   const { mutate, isPending } = useMutation({
     mutationFn: (decision: ChainDecision) => respondToChain(chainId, decision),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: chainKeys.detail(chainId) }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: chainKeys.all }),
   })
 
   return (
