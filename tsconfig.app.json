@@ -16,7 +16,12 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Алиас на корень src — кросс-слойные импорты FSD без ../../../ */
+    "paths": { "@/*": ["./src/*"] },
+
     /* Linting */
+    "strict": true,
+    "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
