@@ -1,4 +1,6 @@
 export { ItemCard } from './ui/ItemCard'
+export { WishCard } from './ui/WishCard'
+export { ItemStatusChip } from './ui/ItemStatusChip'
 export { itemKeys, getMyItems, createItem, type ItemDraft } from './api/itemsApi'
 export { CATEGORIES, CONDITIONS, CONDITION_LABEL } from './model/dictionaries'
 export type { Item, ItemStatus, ItemCondition, Wish } from './model/types'
