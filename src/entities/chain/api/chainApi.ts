@@ -78,6 +78,9 @@ export async function respondToChain(id: string, decision: ChainDecision): Promi
 
   // Демо-имитация ответа остальных участников: на бэке это придёт обычным refetch.
   setTimeout(() => {
+    // За это время пользователь мог выйти из цепочки — распавшуюся не воскрешаем.
+    if (chain.status !== 'formed') return
+
     chain = {
       ...chain,
       status: 'active',
