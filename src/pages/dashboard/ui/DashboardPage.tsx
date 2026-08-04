@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Banner, BrandMark, Button } from '@/shared/ui'
+import { useNavigate } from 'react-router-dom'
+import { BrandMark, Button } from '@/shared/ui'
 import { cx } from '@/shared/lib'
+import { DealsList, PendingDealBanner } from '@/widgets/deals-list'
 import { ItemsList } from '@/widgets/items-list'
 
 type Tab = 'items' | 'wishes' | 'exchanges'
@@ -55,36 +56,14 @@ export function DashboardPage() {
           ))}
         </nav>
 
-        {tab === 'items' ? (
+        {tab === 'items' && (
           <>
-            <Link
-              to="/exchange/c1"
-              className="rounded-2xl outline-offset-2 focus-visible:outline-2 focus-visible:outline-brand"
-            >
-              <Banner
-                tone="info"
-                icon={
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.9"
-                  >
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 8v8M8 12h8" />
-                  </svg>
-                }
-              >
-                <b className="font-bold">1 новое предложение</b> — цепочка на 4 человека
-              </Banner>
-            </Link>
+            <PendingDealBanner />
             <ItemsList />
           </>
-        ) : (
-          <p className="py-10 text-center text-sm text-ink-3">Скоро</p>
         )}
+        {tab === 'exchanges' && <DealsList />}
+        {tab === 'wishes' && <p className="py-10 text-center text-sm text-ink-3">Скоро</p>}
       </div>
 
       <div className="mt-auto p-4">
