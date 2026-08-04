@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { Link, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { chainKeys, DealStatusChip, getChain } from '@/entities/chain'
-import { IconChevronLeft } from '@/shared/ui'
+import { Notice, Screen, ScreenHeader } from '@/shared/ui'
 import { ChainBoard } from '@/widgets/chain-board'
 
 /**
@@ -10,6 +10,7 @@ import { ChainBoard } from '@/widgets/chain-board'
  */
 export function ExchangePage() {
   const { id = '' } = useParams()
+  const navigate = useNavigate()
 
   const {
     data: chain,
@@ -23,26 +24,16 @@ export function ExchangePage() {
   })
 
   return (
-    <div className="mx-auto flex min-h-svh max-w-md flex-col bg-card">
-      <header className="flex items-center gap-2.5 border-b border-line-2 px-4 py-3.5">
-        <Link
-          to="/"
-          aria-label="Назад"
-          className="rounded-sm text-ink-2 outline-offset-4 focus-visible:outline-2 focus-visible:outline-brand"
-        >
-          <IconChevronLeft size={19} />
-        </Link>
-        <h1 className="flex-1 text-[16px] font-bold">Цепочка обмена</h1>
+    <Screen>
+      <ScreenHeader title="Цепочка обмена" onBack={() => navigate('/')}>
         {chain && <DealStatusChip chain={chain} />}
-      </header>
+      </ScreenHeader>
 
       <main className="flex flex-1 flex-col p-4">
-        {isPending && <p className="py-10 text-center text-sm text-ink-3">Загрузка…</p>}
-        {isError && (
-          <p className="py-10 text-center text-sm text-stop">Не удалось загрузить цепочку</p>
-        )}
+        {isPending && <Notice>Загрузка…</Notice>}
+        {isError && <Notice tone="error">Не удалось загрузить цепочку</Notice>}
         {chain && <ChainBoard chain={chain} />}
       </main>
-    </div>
+    </Screen>
   )
 }

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { getMyItems, itemKeys, WishCard } from '@/entities/item'
+import { Notice } from '@/shared/ui'
 
 /** Что пользователь ищет: желания берутся из его же вещей (wish — поле вещи). */
 export function WishesList() {
@@ -8,20 +9,12 @@ export function WishesList() {
     queryFn: getMyItems,
   })
 
-  if (isPending) {
-    return <p className="py-8 text-center text-sm text-ink-3">Загрузка…</p>
-  }
-  if (isError) {
-    return <p className="py-8 text-center text-sm text-stop">Не удалось загрузить желания</p>
-  }
+  if (isPending) return <Notice>Загрузка…</Notice>
+  if (isError) return <Notice tone="error">Не удалось загрузить желания</Notice>
 
   const wanted = data.filter((item) => item.wish)
   if (wanted.length === 0) {
-    return (
-      <p className="py-8 text-center text-sm text-ink-2">
-        Желаний пока нет. Добавьте вещь и укажите, что хотите взамен.
-      </p>
-    )
+    return <Notice>Желаний пока нет. Добавьте вещь и укажите, что хотите взамен.</Notice>
   }
 
   return (

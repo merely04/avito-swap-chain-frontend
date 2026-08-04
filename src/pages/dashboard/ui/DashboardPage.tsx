@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { BrandMark, Button } from '@/shared/ui'
+import { BrandMark, Button, Screen, ScreenHeader } from '@/shared/ui'
 import { cx } from '@/shared/lib'
 import { DealsList, PendingDealBanner } from '@/widgets/deals-list'
 import { ItemsList } from '@/widgets/items-list'
@@ -19,9 +19,8 @@ export function DashboardPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="mx-auto flex min-h-svh max-w-md flex-col bg-card">
-      <header className="flex items-center justify-between border-b border-line-2 px-4 py-3.5">
-        <BrandMark />
+    <Screen>
+      <ScreenHeader title={<BrandMark />}>
         <span className="grid size-8 place-items-center rounded-full bg-brand-soft text-brand">
           <svg
             width="17"
@@ -30,12 +29,13 @@ export function DashboardPage() {
             fill="none"
             stroke="currentColor"
             strokeWidth="1.8"
+            aria-hidden="true"
           >
             <circle cx="12" cy="8" r="4" />
             <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
           </svg>
         </span>
-      </header>
+      </ScreenHeader>
 
       <div className="flex flex-col gap-3.5 p-4">
         <nav className="flex gap-6 border-b border-line-2">
@@ -44,8 +44,9 @@ export function DashboardPage() {
               key={t.key}
               type="button"
               onClick={() => setTab(t.key)}
+              aria-pressed={tab === t.key}
               className={cx(
-                'relative pb-2.5 text-sm font-semibold rounded-sm outline-offset-4 focus-visible:outline-2 focus-visible:outline-brand',
+                'relative rounded-sm pb-2.5 text-sm font-semibold outline-offset-4 focus-visible:outline-2 focus-visible:outline-brand',
                 tab === t.key ? 'text-ink' : 'text-ink-2',
               )}
             >
@@ -72,6 +73,6 @@ export function DashboardPage() {
           Добавить вещь
         </Button>
       </div>
-    </div>
+    </Screen>
   )
 }

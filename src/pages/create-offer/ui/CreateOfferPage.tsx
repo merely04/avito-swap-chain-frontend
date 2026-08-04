@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AddItemForm, type ItemFormValues } from '@/features/add-item'
 import { DescribeWishForm } from '@/features/describe-wish'
-import { Chip, IconChevronLeft } from '@/shared/ui'
+import { Chip, Screen, ScreenHeader } from '@/shared/ui'
 
 /**
  * Публикация вещи в два шага: сама вещь → что хочется взамен.
@@ -19,21 +19,10 @@ export function CreateOfferPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-svh max-w-md flex-col bg-card">
-      <header className="flex items-center gap-2.5 border-b border-line-2 px-4 py-3.5">
-        <button
-          type="button"
-          onClick={goBack}
-          aria-label="Назад"
-          className="cursor-pointer rounded-sm text-ink-2 outline-offset-4 focus-visible:outline-2 focus-visible:outline-brand"
-        >
-          <IconChevronLeft size={19} />
-        </button>
-        <h1 className="flex-1 text-[16px] font-bold">
-          {step === 1 ? 'Новая вещь' : 'Что хотите взамен'}
-        </h1>
+    <Screen>
+      <ScreenHeader title={step === 1 ? 'Новая вещь' : 'Что хотите взамен'} onBack={goBack}>
         <Chip>Шаг {step} из 2</Chip>
-      </header>
+      </ScreenHeader>
 
       <main className="flex flex-1 flex-col p-4">
         {step === 2 && values ? (
@@ -48,6 +37,6 @@ export function CreateOfferPage() {
           />
         )}
       </main>
-    </div>
+    </Screen>
   )
 }
