@@ -1,3 +1,4 @@
+export { BrandMark } from './BrandMark'
 export { Button } from './Button'
 export { Chip } from './Chip'
 export { Card } from './Card'

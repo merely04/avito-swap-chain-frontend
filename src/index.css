@@ -9,6 +9,11 @@
   --color-brand-soft: #e5f6ff;
   --color-on-brand: #ffffff;
 
+  /* акцентный набор Avito (лого-точки, бренд-акценты) */
+  --color-accent-green: #97cf26;
+  --color-accent-violet: #a169f7;
+  --color-accent-red: #ff6163;
+
   /* нейтрали — тёплый светло-серый, как поверхности Avito */
   --color-page: #f4f3f1;
   --color-card: #ffffff;
