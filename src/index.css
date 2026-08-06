@@ -27,14 +27,12 @@
   --color-dark: #0a0a0a;
   --color-dark-press: #262626;
 
+  /* статусные цвета: только «готово» и «стоп». Ожидание и заморозка — нейтраль плюс
+   * азурная точка: пять пастельных плашек в одном списке рябили и мешали читать. */
   --color-ok: #1f8a3f;
   --color-ok-bg: #e7f4ea;
-  --color-wait: #b26a00;
-  --color-wait-bg: #fff2da;
   --color-stop: #e11d2e;
   --color-stop-bg: #ffebec;
-  --color-frozen: #7a46d6;
-  --color-frozen-bg: #f1eafd;
 
   --radius-btn: 12px;
   --radius-card: 16px;
@@ -63,5 +61,16 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  /* Ленты, которые прокручиваются пальцем: полоса прокрутки под меню кабинета
+   * на узких экранах читается как посторонняя линия. */
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 }

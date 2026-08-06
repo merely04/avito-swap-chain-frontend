@@ -14,8 +14,11 @@ export function SwitchPersona() {
 
   return (
     <label className="flex items-center gap-1.5">
-      <span className="text-[11px] leading-tight text-ink-3">Смотрю как</span>
+      {/* На узких окнах подпись прячется: в одну строку шапки лезут лок-ап, поиск и аккаунт,
+          а смысл переключателя и так виден по имени в поле. Экранным читалкам она остаётся. */}
+      <span className="text-[11px] leading-tight text-ink-3 max-sm:sr-only">Смотрю как</span>
       <select
+        title="Смотрю как"
         value={personaId}
         onChange={(event) => {
           setPersonaId(event.target.value)

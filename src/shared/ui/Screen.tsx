@@ -45,7 +45,7 @@ interface ScreenHeaderProps {
 
 export function ScreenHeader({ title, onBack, children }: ScreenHeaderProps) {
   return (
-    <header className="flex items-center gap-2.5 border-b border-line-2 px-4 py-3.5">
+    <header className="flex items-center gap-2.5 border-b border-line-2 px-4 py-3 sm:py-3.5">
       {onBack && (
         <button
           type="button"

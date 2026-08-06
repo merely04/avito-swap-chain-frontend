@@ -3,7 +3,8 @@
  *
  * Геометрия знака — из официального SVG: четыре круга разного размера по двум диагоналям,
  * крупные зелёный и голубой против мелких фиолетового и красного. Не сетка 2×2.
- * Подпись раздела тоньше и тусклее знака: сервис живёт внутри Авито, а не рядом с ним.
+ * Название раздела набрано тем же начертанием, что и «Avito», — как у вертикалей Авито
+ * («Авито Доставка», «Авито Услуги»): это одно имя сервиса, а не бренд с подписью.
  */
 export function BrandMark({ label = 'Обмен' }: { label?: string }) {
   return (
@@ -15,10 +16,7 @@ export function BrandMark({ label = 'Обмен' }: { label?: string }) {
         <circle cx="146.404" cy="72.347" r="45.829" className="fill-accent-violet" />
       </svg>
 
-      <span className="tracking-tight">
-        Avito
-        <span className="ml-1.5 font-normal text-ink-2">{label}</span>
-      </span>
+      <span className="tracking-tight">Avito {label}</span>
     </span>
   )
 }

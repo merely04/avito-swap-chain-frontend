@@ -13,7 +13,7 @@ export function ChainBoard({ chain }: { chain: Chain }) {
   const neighbours = findNeighbours(chain)
 
   return (
-    <div className="flex flex-1 flex-col gap-3.5">
+    <div className="flex flex-1 flex-col gap-3 sm:gap-3.5">
       {me && neighbours ? (
         renderView({ chain, me, neighbours })
       ) : (

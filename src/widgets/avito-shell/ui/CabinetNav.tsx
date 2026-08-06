@@ -33,7 +33,7 @@ export function CabinetNav({ section }: { section: Section }) {
   return (
     <nav
       aria-label="Личный кабинет"
-      className="flex gap-1 overflow-x-auto px-3 py-2 max-lg:border-b max-lg:border-line-2 lg:sticky lg:top-6 lg:w-56 lg:shrink-0 lg:flex-col lg:gap-0.5 lg:self-start lg:overflow-visible lg:rounded-card lg:border lg:border-line lg:bg-card lg:p-2 lg:shadow-card"
+      className="no-scrollbar flex gap-1 overflow-x-auto px-3 py-1.5 max-lg:border-b max-lg:border-line-2 sm:py-2 lg:sticky lg:top-6 lg:w-56 lg:shrink-0 lg:flex-col lg:gap-0.5 lg:self-start lg:overflow-visible lg:rounded-card lg:border lg:border-line lg:bg-card lg:p-2 lg:shadow-card"
     >
       <Link
         to={ITEMS_URL}

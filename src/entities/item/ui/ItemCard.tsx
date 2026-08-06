@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { cx } from '@/shared/lib'
 import { Card, IconImage } from '@/shared/ui'
 import { CONDITION_LABEL } from '../model/dictionaries'
 import type { Item } from '../model/types'
@@ -12,7 +13,15 @@ interface ItemCardProps {
 
 export function ItemCard({ item, action }: ItemCardProps) {
   return (
-    <Card className="flex items-center gap-3 p-3">
+    // Кнопка до 400px переезжает под название: рядом с ней на заголовок остаётся полстроки,
+    // и «Монитор LG 27" IPS» обрезается до «Монитор L…». Статус-подпись узкая — она
+    // остаётся в строке всегда, отдельная строка ради неё вдвое растила бы карточку.
+    <Card
+      className={cx(
+        'grid grid-cols-[auto_1fr] items-center gap-x-3 p-3',
+        action ? 'gap-y-2.5 min-[400px]:flex' : 'grid-cols-[auto_1fr_auto]',
+      )}
+    >
       {item.photoUrl ? (
         <img
           src={item.photoUrl}
@@ -33,7 +42,14 @@ export function ItemCard({ item, action }: ItemCardProps) {
         </span>
       </div>
 
-      {action ?? <ItemStatusChip status={item.status} />}
+      <div
+        className={cx(
+          'flex justify-end',
+          action ? 'col-span-2 min-[400px]:col-span-1 min-[400px]:shrink-0' : undefined,
+        )}
+      >
+        {action ?? <ItemStatusChip status={item.status} />}
+      </div>
     </Card>
   )
 }

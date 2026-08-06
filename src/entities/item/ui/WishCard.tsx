@@ -28,7 +28,9 @@ export function WishCard({ item }: { item: Item }) {
           {item.wish.length > 1 ? 'Подойдёт любое:' : 'Хочу:'}
         </span>
         {item.wish.map((variant) => (
-          <Chip key={variant.description}>{variant.description}</Chip>
+          <Chip key={variant.description} filled>
+            {variant.description}
+          </Chip>
         ))}
       </div>
     </Card>

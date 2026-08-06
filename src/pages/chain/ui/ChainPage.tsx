@@ -34,7 +34,7 @@ export function ChainPage() {
         {chain && <DealStatusChip chain={chain} />}
       </ScreenHeader>
 
-      <main className="flex flex-1 flex-col p-4">
+      <main className="flex flex-1 flex-col p-3.5 sm:p-4">
         {isPending && <Notice>Загрузка…</Notice>}
         {isError && <Notice tone="error">Не удалось загрузить цепочку</Notice>}
         {chain && <ChainBoard chain={chain} />}

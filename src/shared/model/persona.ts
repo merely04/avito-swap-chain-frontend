@@ -5,6 +5,7 @@ export interface Persona {
   id: string
   name: string
   rating: number
+  avatarUrl: string
   /** Что персона искала на Авито — запросы, а не объявления. */
   searches: string[]
   /** Названия объявлений, сохранённых в избранное. */
@@ -25,6 +26,7 @@ export const PERSONAS: Persona[] = [
     id: 'u1',
     name: 'Даша',
     rating: 4.8,
+    avatarUrl: '/mock/avatars/u32.jpg',
     searches: ['умные часы', 'механическая клавиатура', 'фитнес-браслет'],
     favorites: ['PlayStation 4 Slim, 1 ТБ'],
   },
@@ -32,6 +34,7 @@ export const PERSONAS: Persona[] = [
     id: 'u2',
     name: 'Марк',
     rating: 4.9,
+    avatarUrl: '/mock/avatars/u12.jpg',
     searches: ['монитор', 'горный велосипед', 'графический планшет'],
     favorites: ['Плёночный фотоаппарат'],
   },
@@ -39,6 +42,7 @@ export const PERSONAS: Persona[] = [
     id: 'u3',
     name: 'Лена',
     rating: 4.7,
+    avatarUrl: '/mock/avatars/u47.jpg',
     searches: ['кофеварка', 'умные часы', 'горный велосипед', 'виниловый проигрыватель'],
     favorites: ['Наушники'],
   },

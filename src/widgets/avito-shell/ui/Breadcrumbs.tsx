@@ -14,7 +14,7 @@ export function Breadcrumbs({ pathname }: { pathname: string }) {
   return (
     <nav
       aria-label="Хлебные крошки"
-      className="mx-auto flex w-full max-w-2xl items-center gap-1.5 px-4 pt-2.5 text-[12px] text-ink-3 lg:px-0 lg:pt-0 lg:pb-2.5"
+      className="mx-auto flex w-full max-w-2xl items-center gap-1.5 px-4 pt-2 text-[12px] text-ink-3 sm:pt-2.5 lg:px-0 lg:pt-0 lg:pb-2.5"
     >
       {crumbs.map((crumb, i) => (
         <Fragment key={crumb.label}>

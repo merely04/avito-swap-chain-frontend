@@ -1,9 +1,11 @@
 import { Chip } from '@/shared/ui'
 import type { ItemStatus } from '../model/types'
 
-const STATUS_VIEW: Record<ItemStatus, { status: 'frozen' | 'wait'; label: string } | null> = {
-  reserved: { status: 'frozen', label: 'В цепочке' },
-  searching: { status: 'wait', label: 'Поиск обмена' },
+// Оба состояния спокойные, поэтому оба — подпись без заливки. Различает их текст,
+// а точка добавляет один сигнал: азур = вещь занята в сделке, серый = просто ищем.
+const STATUS_VIEW: Record<ItemStatus, { tone: 'accent' | 'neutral'; label: string } | null> = {
+  reserved: { tone: 'accent', label: 'В цепочке' },
+  searching: { tone: 'neutral', label: 'Поиск обмена' },
   idle: null,
 }
 
@@ -13,7 +15,7 @@ export function ItemStatusChip({ status }: { status: ItemStatus }) {
   if (!view) return null
 
   return (
-    <Chip status={view.status} dot>
+    <Chip tone={view.tone} dot>
       {view.label}
     </Chip>
   )

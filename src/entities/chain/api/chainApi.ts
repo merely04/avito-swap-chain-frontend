@@ -17,7 +17,7 @@ export type ChainDecision = Extract<ParticipantStatus, 'confirmed' | 'declined'>
 
 const [DASHA, MARK, LENA] = PERSONAS
 
-/** Участник-персона: имя и рейтинг берём из общего реестра, чтобы они не разъезжались. */
+/** Участник-персона: имя, рейтинг и аватар берём из общего реестра, чтобы они не разъезжались. */
 const of = (
   persona: Persona,
   givesItem: ChainParticipant['givesItem'],
@@ -26,6 +26,7 @@ const of = (
 ): ChainParticipant => ({
   userId: persona.id,
   name: persona.name,
+  avatarUrl: persona.avatarUrl,
   rating: persona.rating,
   givesItem,
   status,
@@ -41,14 +42,27 @@ let chains: Chain[] = [
     id: 'c1',
     status: 'formed',
     participants: [
-      of(DASHA, { id: '1', title: 'Горный велосипед' }, 'pending'),
-      of(MARK, { id: '21', title: 'Наушники' }, 'confirmed'),
-      of(LENA, { id: '31', title: 'Плёночный фотоаппарат' }, 'pending'),
+      of(
+        DASHA,
+        { id: '1', title: 'Горный велосипед', photoUrl: '/mock/items/bike.jpg' },
+        'pending',
+      ),
+      of(
+        MARK,
+        { id: '21', title: 'Наушники', photoUrl: '/mock/items/headphones.jpg' },
+        'confirmed',
+      ),
+      of(
+        LENA,
+        { id: '31', title: 'Плёночный фотоаппарат', photoUrl: '/mock/items/camera.jpg' },
+        'pending',
+      ),
+      // Единственный участник без `avatarUrl` — намеренно: на нём видно фолбэк на инициал.
       {
         userId: 'u4',
         name: 'Аня',
         rating: 5.0,
-        givesItem: { id: '41', title: 'Смартфон' },
+        givesItem: { id: '41', title: 'Смартфон', photoUrl: '/mock/items/phone.jpg' },
         status: 'confirmed',
         receiptConfirmed: false,
       },
@@ -60,20 +74,22 @@ let chains: Chain[] = [
     id: 'c2',
     status: 'active',
     participants: [
-      of(DASHA, { id: '5', title: 'Кофеварка' }, 'confirmed'),
+      of(DASHA, { id: '5', title: 'Кофеварка', photoUrl: '/mock/items/coffee.jpg' }, 'confirmed'),
       {
         userId: 'u5',
         name: 'Игорь',
+        avatarUrl: '/mock/avatars/u60.jpg',
         rating: 4.8,
-        givesItem: { id: '51', title: 'Акустическая гитара' },
+        givesItem: { id: '51', title: 'Акустическая гитара', photoUrl: '/mock/items/guitar.jpg' },
         status: 'confirmed',
         receiptConfirmed: true,
       },
       {
         userId: 'u6',
         name: 'Соня',
+        avatarUrl: '/mock/avatars/u5.jpg',
         rating: 4.6,
-        givesItem: { id: '61', title: 'Электросамокат' },
+        givesItem: { id: '61', title: 'Электросамокат', photoUrl: '/mock/items/scooter.jpg' },
         status: 'confirmed',
         receiptConfirmed: false,
       },
@@ -83,28 +99,36 @@ let chains: Chain[] = [
     id: 'c3',
     status: 'completed',
     participants: [
-      of(LENA, { id: '32', title: 'Настольная лампа' }, 'confirmed', true),
+      of(
+        LENA,
+        { id: '32', title: 'Настольная лампа', photoUrl: '/mock/items/lamp.jpg' },
+        'confirmed',
+        true,
+      ),
       {
         userId: 'u7',
         name: 'Паша',
+        avatarUrl: '/mock/avatars/u68.jpg',
         rating: 4.9,
-        givesItem: { id: '71', title: 'Монитор 24"' },
+        givesItem: { id: '71', title: 'Монитор 24"', photoUrl: '/mock/items/monitor24.jpg' },
         status: 'confirmed',
         receiptConfirmed: true,
       },
       {
         userId: 'u8',
         name: 'Катя',
+        avatarUrl: '/mock/avatars/u26.jpg',
         rating: 5.0,
-        givesItem: { id: '81', title: 'Плед' },
+        givesItem: { id: '81', title: 'Плед', photoUrl: '/mock/items/blanket.jpg' },
         status: 'confirmed',
         receiptConfirmed: true,
       },
       {
         userId: 'u9',
         name: 'Рома',
+        avatarUrl: '/mock/avatars/u15.jpg',
         rating: 4.5,
-        givesItem: { id: '91', title: 'Кресло-мешок' },
+        givesItem: { id: '91', title: 'Кресло-мешок', photoUrl: '/mock/items/beanbag.jpg' },
         status: 'confirmed',
         receiptConfirmed: true,
       },

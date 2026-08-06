@@ -30,19 +30,19 @@ export function ExchangeSummary({
   past = false,
 }: ExchangeSummaryProps) {
   return (
-    <div className="grid grid-cols-[1fr_auto_1fr] justify-items-center gap-x-2.5 gap-y-1.5 rounded-card bg-brand-soft p-3.5">
+    <div className="grid grid-cols-[1fr_auto_1fr] justify-items-center gap-x-2.5 gap-y-1 rounded-card bg-brand-soft p-3 sm:gap-y-1.5 sm:p-3.5">
       <small className={cx(label, 'col-start-1')}>{past ? 'Отдали' : 'Отдаёте'}</small>
       <small className={cx(label, 'col-start-3')}>{past ? 'Получили' : 'Получаете'}</small>
 
-      <Thumb className="col-start-1" />
+      <Thumb item={give} className="col-start-1" />
       <IconArrowRight size={26} className="col-start-2 row-start-2 self-center text-brand" />
-      <Thumb className="col-start-3" />
+      <Thumb item={receive} className="col-start-3" />
 
       <b className={cx(title, 'col-start-1')}>{give.title}</b>
       <b className={cx(title, 'col-start-3')}>{receive.title}</b>
 
       {reserved && (
-        <Chip status="frozen" dot className="col-start-1 row-start-4">
+        <Chip tone="accent" dot className="col-start-1 row-start-4">
           В цепочке
         </Chip>
       )}
@@ -50,16 +50,17 @@ export function ExchangeSummary({
   )
 }
 
-/** Плейсхолдер вещи, пока в моке нет фото. */
-function Thumb({ className }: { className: string }) {
-  return (
-    <span
-      className={cx(
-        'row-start-2 grid size-15 place-items-center rounded-xl bg-card text-ink-3',
-        className,
-      )}
-    >
-      <IconBox size={28} />
-    </span>
-  )
+/** Миниатюра вещи; без фото — коробка-плейсхолдер, как в объявлении без снимка. */
+function Thumb({ item, className }: { item: ItemRef; className: string }) {
+  const box = cx('row-start-2 size-15 rounded-xl bg-card', className)
+
+  if (!item.photoUrl) {
+    return (
+      <span className={cx('grid place-items-center text-ink-3', box)}>
+        <IconBox size={28} />
+      </span>
+    )
+  }
+
+  return <img src={item.photoUrl} alt="" loading="lazy" className={cx('object-cover', box)} />
 }

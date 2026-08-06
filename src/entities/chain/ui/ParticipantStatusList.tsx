@@ -3,25 +3,28 @@ import { cx } from '@/shared/lib'
 import { IconCheck, IconClock, IconClose, IconPlus } from '@/shared/ui'
 import { displayName } from '../lib/participants'
 import type { ChainParticipant, ParticipantStatus } from '../model/types'
+import { ParticipantAvatar } from './ParticipantAvatar'
 
+// Значок на аватаре — единственное цветное пятно в строке: зелёный «готов», серый «ждём»,
+// красный «отказ». Ожидание не тревога, поэтому оно нейтральное, а не оранжевое.
 const STATUS_VIEW: Record<
   ParticipantStatus,
   { badge: string; label: string; myLabel: string; Icon: ComponentType<{ size?: number }> }
 > = {
   confirmed: {
-    badge: 'bg-ok-bg text-ok',
+    badge: 'bg-ok text-white',
     label: 'Подтверждено',
     myLabel: 'Вы подтвердили',
     Icon: IconCheck,
   },
   pending: {
-    badge: 'bg-wait-bg text-wait',
+    badge: 'bg-line text-ink-2',
     label: 'Ожидаем',
     myLabel: 'Ваш ход',
     Icon: IconClock,
   },
   declined: {
-    badge: 'bg-stop-bg text-stop',
+    badge: 'bg-stop text-white',
     label: 'Отказ',
     myLabel: 'Вы отказались',
     Icon: IconClose,
@@ -41,17 +44,25 @@ export function ParticipantStatusList({ participants }: { participants: ChainPar
           <div
             key={p.userId}
             className={cx(
-              'flex items-center gap-2.5 border-b border-line-2 px-3 py-2.5 last:border-b-0',
+              'flex items-center gap-2.5 border-b border-line-2 px-3 py-2 last:border-b-0',
               p.isMe && 'bg-brand-soft',
             )}
           >
-            <span
-              className={cx(
-                'grid size-5 shrink-0 place-items-center rounded-full',
-                waitsForMe ? 'bg-brand text-on-brand' : view.badge,
-              )}
-            >
-              <Icon size={12} />
+            {/* Значок статуса сидит на аватаре: одно лицо участника вместо двух кружков в строке. */}
+            <span className="relative shrink-0">
+              <ParticipantAvatar
+                participant={p}
+                className="size-9 bg-line-2 text-[14px] font-bold text-ink-2"
+              />
+              <span
+                className={cx(
+                  'absolute -right-0.5 -bottom-0.5 grid size-4 place-items-center rounded-full ring-2',
+                  waitsForMe ? 'bg-brand text-on-brand' : view.badge,
+                  p.isMe ? 'ring-brand-soft' : 'ring-card',
+                )}
+              >
+                <Icon size={10} />
+              </span>
             </span>
 
             <div className="min-w-0 flex-1">

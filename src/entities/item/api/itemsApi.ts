@@ -29,6 +29,7 @@ let itemsByOwner: Record<string, Item[]> = {
     {
       id: '3',
       title: 'Монитор LG 27" IPS',
+      photoUrl: '/mock/items/monitor.jpg',
       category: 'Электроника',
       condition: 'good',
       status: 'idle',
@@ -37,6 +38,7 @@ let itemsByOwner: Record<string, Item[]> = {
     {
       id: '1',
       title: 'Горный велосипед',
+      photoUrl: '/mock/items/bike.jpg',
       category: 'Спорт и отдых',
       condition: 'good',
       status: 'reserved',
@@ -48,11 +50,14 @@ let itemsByOwner: Record<string, Item[]> = {
     {
       id: '5',
       title: 'Кофеварка',
+      photoUrl: '/mock/items/coffee.jpg',
       category: 'Дом и дача',
       condition: 'good',
       status: 'reserved',
       wish: [{ category: 'Транспорт', description: 'Электросамокат' }],
     },
+    // Единственная вещь без `photoUrl` — намеренно: объявление без фото на Авито обычное дело,
+    // и на ней видно, что плейсхолдер `ItemCard` работает.
     {
       id: '2',
       title: 'Гантели 20 кг',
@@ -70,6 +75,7 @@ let itemsByOwner: Record<string, Item[]> = {
     {
       id: '23',
       title: 'Умные часы Amazfit GTR',
+      photoUrl: '/mock/items/watch.jpg',
       category: 'Электроника',
       condition: 'good',
       status: 'idle',
@@ -78,6 +84,7 @@ let itemsByOwner: Record<string, Item[]> = {
     {
       id: '21',
       title: 'Наушники',
+      photoUrl: '/mock/items/headphones.jpg',
       category: 'Аудио',
       condition: 'good',
       status: 'reserved',
@@ -86,6 +93,7 @@ let itemsByOwner: Record<string, Item[]> = {
     {
       id: '22',
       title: 'Механическая клавиатура',
+      photoUrl: '/mock/items/keyboard.jpg',
       category: 'Электроника',
       condition: 'new',
       status: 'searching',
@@ -99,6 +107,7 @@ let itemsByOwner: Record<string, Item[]> = {
     {
       id: '34',
       title: 'PlayStation 4 Slim, 1 ТБ',
+      photoUrl: '/mock/items/console.jpg',
       category: 'Электроника',
       condition: 'used',
       status: 'idle',
@@ -107,6 +116,7 @@ let itemsByOwner: Record<string, Item[]> = {
     {
       id: '31',
       title: 'Плёночный фотоаппарат',
+      photoUrl: '/mock/items/camera.jpg',
       category: 'Электроника',
       condition: 'used',
       status: 'reserved',
@@ -115,6 +125,7 @@ let itemsByOwner: Record<string, Item[]> = {
     {
       id: '33',
       title: 'Кофемолка',
+      photoUrl: '/mock/items/grinder.jpg',
       category: 'Дом и дача',
       condition: 'good',
       status: 'searching',

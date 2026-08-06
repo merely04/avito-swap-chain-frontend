@@ -10,7 +10,7 @@ export interface ChainParticipant {
   avatarUrl?: string
   rating?: number
   /** Вещь, которую участник отдаёт следующему по кругу. */
-  givesItem: { id: string; title: string }
+  givesItem: { id: string; title: string; photoUrl?: string }
   status: ParticipantStatus
   /**
    * Отметил ли участник, что получил свою вещь. Флаг у участника, а не у цепочки:
