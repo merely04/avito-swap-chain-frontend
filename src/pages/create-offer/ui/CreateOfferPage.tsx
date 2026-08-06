@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { createItem } from '@/entities/item'
 import { AddItemForm, type ItemFormValues } from '@/features/add-item'
 import { DescribeWishForm } from '@/features/describe-wish'
 import { Chip, Screen, ScreenHeader } from '@/shared/ui'
@@ -26,7 +27,13 @@ export function CreateOfferPage() {
 
       <main className="flex flex-1 flex-col p-4">
         {step === 2 && values ? (
-          <DescribeWishForm item={values} onCreated={() => navigate('/')} />
+          <DescribeWishForm
+            give={values.title}
+            submitLabel="Опубликовать и искать обмен"
+            pendingLabel="Публикуем…"
+            onSubmit={(wish) => createItem({ ...values, wish })}
+            onDone={() => navigate('/')}
+          />
         ) : (
           <AddItemForm
             initial={values}

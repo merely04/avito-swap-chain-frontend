@@ -1,25 +1,38 @@
 import { useState, type SubmitEvent } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { CATEGORIES, createItem, itemKeys, type Item, type ItemDraft } from '@/entities/item'
+import { CATEGORIES, itemKeys, type Wish } from '@/entities/item'
 import { Button, Field, Select } from '@/shared/ui'
 
 interface DescribeWishFormProps {
-  /** Вещь с первого шага — публикуется вместе с желанием. */
-  item: Omit<ItemDraft, 'wish'>
-  onCreated: (created: Item) => void
+  /** Что человек отдаёт — показываем, чтобы желание указывали осознанно. */
+  give: string
+  submitLabel: string
+  pendingLabel: string
+  /**
+   * Как сохранить желание. Форма одна на оба входа в сервис — публикацию новой вещи
+   * и включение обмена у уже размещённого объявления; отличается только сохранение.
+   */
+  onSubmit: (wish: Wish) => Promise<unknown>
+  onDone: () => void
 }
 
-/** Второй шаг публикации: что пользователь хочет получить взамен. */
-export function DescribeWishForm({ item, onCreated }: DescribeWishFormProps) {
+/** Желание: что пользователь хочет получить взамен. Это ребро графа, по нему ищется цепочка. */
+export function DescribeWishForm({
+  give,
+  submitLabel,
+  pendingLabel,
+  onSubmit,
+  onDone,
+}: DescribeWishFormProps) {
   const [category, setCategory] = useState<string>(CATEGORIES[0])
   const [description, setDescription] = useState('')
   const queryClient = useQueryClient()
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: () => createItem({ ...item, wish: { category, description: description.trim() } }),
-    onSuccess: (created) => {
+  const { mutate, isPending, isError } = useMutation({
+    mutationFn: () => onSubmit({ category, description: description.trim() }),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: itemKeys.my() })
-      onCreated(created)
+      onDone()
     },
   })
 
@@ -31,7 +44,7 @@ export function DescribeWishForm({ item, onCreated }: DescribeWishFormProps) {
   return (
     <form onSubmit={submit} className="flex flex-1 flex-col gap-3.5">
       <p className="text-[13.5px] text-ink-2">
-        Отдаёте: <b className="font-bold text-ink">{item.title}</b>
+        Отдаёте: <b className="font-bold text-ink">{give}</b>
       </p>
 
       <Field label="Категория желаемого">
@@ -59,9 +72,15 @@ export function DescribeWishForm({ item, onCreated }: DescribeWishFormProps) {
         цепочка найдётся, вы получите предложение.
       </p>
 
+      {isError && (
+        <p role="alert" className="text-[12.5px] font-semibold text-stop">
+          Не удалось сохранить желание. Проверьте, что указали, чего хотите взамен.
+        </p>
+      )}
+
       <div className="mt-auto pt-2">
         <Button type="submit" fullWidth disabled={isPending}>
-          {isPending ? 'Публикуем…' : 'Опубликовать и искать обмен'}
+          {isPending ? pendingLabel : submitLabel}
         </Button>
       </div>
     </form>

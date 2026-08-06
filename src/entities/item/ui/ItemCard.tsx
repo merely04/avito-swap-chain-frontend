@@ -1,9 +1,16 @@
+import type { ReactNode } from 'react'
 import { Card, IconImage } from '@/shared/ui'
 import { CONDITION_LABEL } from '../model/dictionaries'
 import type { Item } from '../model/types'
 import { ItemStatusChip } from './ItemStatusChip'
 
-export function ItemCard({ item }: { item: Item }) {
+interface ItemCardProps {
+  item: Item
+  /** Слот действия: сущность не знает про фичи, поэтому кнопку передаёт виджет. */
+  action?: ReactNode
+}
+
+export function ItemCard({ item, action }: ItemCardProps) {
   return (
     <Card className="flex items-center gap-3 p-3">
       {item.photoUrl ? (
@@ -26,7 +33,7 @@ export function ItemCard({ item }: { item: Item }) {
         </span>
       </div>
 
-      <ItemStatusChip status={item.status} />
+      {action ?? <ItemStatusChip status={item.status} />}
     </Card>
   )
 }
