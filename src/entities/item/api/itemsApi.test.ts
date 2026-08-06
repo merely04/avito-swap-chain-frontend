@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { PERSONAS, usePersonaStore } from '@/shared/model/persona'
-import { getMyItems, setItemWish } from './itemsApi'
+import { createItem, getMyItems, setItemWish } from './itemsApi'
 
 const [DASHA, MARK] = PERSONAS
 
-const wish = { category: 'Электроника', description: 'Монитор 27"' }
+const wish = [{ category: 'Электроника', description: 'Монитор 27"' }]
 
 const itemOf = async (id: string) => (await getMyItems()).find((item) => item.id === id)
 
@@ -28,14 +28,10 @@ describe('setItemWish — включение обмена у размещённ�
 
   it('вещь, уже попавшую в цепочку, обмен не расколдовывает', async () => {
     // '1' — велосипед Даши, он зарезервирован в цепочке c1.
-    const updated = await setItemWish('1', { category: 'Аудио', description: 'Колонка' })
+    const updated = await setItemWish('1', [{ category: 'Аудио', description: 'Колонка' }])
 
     expect(updated.status).toBe('reserved')
-    expect(updated.wish?.description).toBe('Колонка')
-  })
-
-  it('без описания желания включать обмен нечего — ребро графа не построить', async () => {
-    await expect(setItemWish('3', { category: 'Электроника', description: '   ' })).rejects.toThrow()
+    expect(updated.wish[0].description).toBe('Колонка')
   })
 
   it('чужое объявление не тронуть: id ищется в кабинете текущей персоны', async () => {
@@ -44,5 +40,89 @@ describe('setItemWish — включение обмена у размещённ�
 
     usePersonaStore.setState({ personaId: MARK.id })
     await expect(setItemWish('23', wish)).resolves.toMatchObject({ status: 'searching' })
+  })
+})
+
+describe('варианты желания — каждый отдельное ребро графа', () => {
+  beforeEach(() => {
+    usePersonaStore.setState({ personaId: DASHA.id })
+  })
+
+  it('сохраняются все варианты и их порядок', async () => {
+    const variants = [
+      { category: 'Электроника', description: 'Игровая приставка' },
+      { category: 'Электроника', description: 'Смартфон' },
+      { category: 'Спорт и отдых', description: 'Беговая дорожка' },
+    ]
+
+    await setItemWish('3', variants)
+
+    expect((await itemOf('3'))?.wish).toEqual(variants)
+  })
+
+  it('пустые варианты отсеиваются, описания обрезаются по краям', async () => {
+    const updated = await setItemWish('3', [
+      { category: 'Электроника', description: '  Монитор 27"  ' },
+      { category: 'Аудио', description: '   ' },
+      { category: 'Транспорт', description: '' },
+    ])
+
+    expect(updated.wish).toEqual([{ category: 'Электроника', description: 'Монитор 27"' }])
+  })
+
+  it('когда все варианты пустые, включать обмен нечего — ребро графа не построить', async () => {
+    await expect(
+      setItemWish('3', [
+        { category: 'Электроника', description: '   ' },
+        { category: 'Аудио', description: '' },
+      ]),
+    ).rejects.toThrow()
+  })
+
+  it('желание без единого варианта отклоняется', async () => {
+    await expect(setItemWish('3', [])).rejects.toThrow()
+  })
+
+  it('повтор того же описания — то же ребро графа, второй раз не сохраняется', async () => {
+    const updated = await setItemWish('3', [
+      { category: 'Электроника', description: 'Монитор 27"' },
+      { category: 'Аудио', description: 'монитор 27"' },
+    ])
+
+    expect(updated.wish).toEqual([{ category: 'Электроника', description: 'Монитор 27"' }])
+  })
+})
+
+describe('createItem — публикация вещи сразу с желанием', () => {
+  const draft = {
+    title: 'Ролики',
+    category: 'Спорт и отдых',
+    condition: 'good' as const,
+    wish: [
+      { category: 'Аудио', description: 'Колонка' },
+      { category: 'Электроника', description: '  Электронная книга ' },
+      { category: 'Дом и дача', description: '  ' },
+    ],
+  }
+
+  beforeEach(() => {
+    usePersonaStore.setState({ personaId: DASHA.id })
+  })
+
+  it('новая вещь уходит в подбор со всеми непустыми вариантами', async () => {
+    const created = await createItem(draft)
+
+    expect(created.status).toBe('searching')
+    expect(created.wish).toEqual([
+      { category: 'Аудио', description: 'Колонка' },
+      { category: 'Электроника', description: 'Электронная книга' },
+    ])
+    expect((await itemOf(created.id))?.wish).toHaveLength(2)
+  })
+
+  it('вещь без единого непустого варианта не публикуется', async () => {
+    await expect(
+      createItem({ ...draft, wish: [{ category: 'Аудио', description: ' ' }] }),
+    ).rejects.toThrow()
   })
 })

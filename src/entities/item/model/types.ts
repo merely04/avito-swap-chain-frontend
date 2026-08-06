@@ -3,7 +3,7 @@ export type ItemCondition = 'new' | 'good' | 'used'
 /** Статус вещи в обороте обмена. */
 export type ItemStatus = 'idle' | 'searching' | 'reserved'
 
-/** Что пользователь хочет получить взамен этой вещи. */
+/** Один вариант желания — одно ребро графа, по которому ищется цепочка. */
 export interface Wish {
   category: string
   description: string
@@ -15,6 +15,10 @@ export interface Item {
   category: string
   condition: ItemCondition
   photoUrl?: string
-  wish?: Wish
+  /**
+   * Варианты желания: «PS5 или Xbox или беговая дорожка» — три ребра и три шанса
+   * замкнуть цикл. Пустой массив = обмен на вещь не включён.
+   */
+  wish: Wish[]
   status: ItemStatus
 }

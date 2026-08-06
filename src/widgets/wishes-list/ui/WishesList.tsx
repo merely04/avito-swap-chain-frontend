@@ -12,7 +12,7 @@ export function WishesList() {
   if (isPending) return <Notice>Загрузка…</Notice>
   if (isError) return <Notice tone="error">Не удалось загрузить желания</Notice>
 
-  const wanted = data.filter((item) => item.wish)
+  const wanted = data.filter((item) => item.wish.length > 0)
   if (wanted.length === 0) {
     return <Notice>Желаний пока нет. Добавьте вещь и укажите, что хотите взамен.</Notice>
   }

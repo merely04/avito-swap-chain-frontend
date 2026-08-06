@@ -17,6 +17,8 @@ const [DASHA, MARK, LENA] = PERSONAS
 // У каждой персоны есть объявление в статусе `idle` — обычное объявление Авито, у которого
 // обмен ещё не включён. Это точка входа в сервис, и каждое такое объявление кому-то из
 // участников нужно: монитор ищет Марк, умные часы — Даша, приставку — Даша.
+// Варианты желания подобраны так, чтобы хотя бы один указывал на вещь, которая у кого-то из
+// персон действительно есть: иначе лишний вариант ничего не даёт и цикл по нему не замкнётся.
 let itemsByOwner: Record<string, Item[]> = {
   [DASHA.id]: [
     {
@@ -25,6 +27,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Электроника',
       condition: 'good',
       status: 'idle',
+      wish: [],
     },
     {
       id: '1',
@@ -32,7 +35,10 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Спорт и отдых',
       condition: 'good',
       status: 'reserved',
-      wish: { category: 'Электроника', description: 'Игровая приставка или смартфон' },
+      wish: [
+        { category: 'Электроника', description: 'Игровая приставка PlayStation' },
+        { category: 'Электроника', description: 'Смартфон не старше трёх лет' },
+      ],
     },
     {
       id: '5',
@@ -40,7 +46,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Дом и дача',
       condition: 'good',
       status: 'reserved',
-      wish: { category: 'Транспорт', description: 'Электросамокат' },
+      wish: [{ category: 'Транспорт', description: 'Электросамокат' }],
     },
     {
       id: '2',
@@ -48,7 +54,11 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Спорт и отдых',
       condition: 'used',
       status: 'searching',
-      wish: { category: 'Электроника', description: 'Умные часы' },
+      wish: [
+        { category: 'Электроника', description: 'Умные часы' },
+        { category: 'Электроника', description: 'Фитнес-браслет' },
+        { category: 'Спорт и отдых', description: 'Беговая дорожка' },
+      ],
     },
   ],
   [MARK.id]: [
@@ -58,6 +68,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Электроника',
       condition: 'good',
       status: 'idle',
+      wish: [],
     },
     {
       id: '21',
@@ -65,7 +76,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Аудио',
       condition: 'good',
       status: 'reserved',
-      wish: { category: 'Спорт и отдых', description: 'Горный велосипед' },
+      wish: [{ category: 'Спорт и отдых', description: 'Горный велосипед' }],
     },
     {
       id: '22',
@@ -73,7 +84,10 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Электроника',
       condition: 'new',
       status: 'searching',
-      wish: { category: 'Электроника', description: 'Монитор 27"' },
+      wish: [
+        { category: 'Электроника', description: 'Монитор 27"' },
+        { category: 'Электроника', description: 'Графический планшет' },
+      ],
     },
   ],
   [LENA.id]: [
@@ -83,6 +97,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Электроника',
       condition: 'used',
       status: 'idle',
+      wish: [],
     },
     {
       id: '31',
@@ -90,7 +105,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Электроника',
       condition: 'used',
       status: 'reserved',
-      wish: { category: 'Аудио', description: 'Наушники' },
+      wish: [{ category: 'Аудио', description: 'Наушники' }],
     },
     {
       id: '33',
@@ -98,7 +113,10 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Дом и дача',
       condition: 'good',
       status: 'searching',
-      wish: { category: 'Хобби и творчество', description: 'Виниловый проигрыватель' },
+      wish: [
+        { category: 'Хобби и творчество', description: 'Виниловый проигрыватель' },
+        { category: 'Дом и дача', description: 'Кофеварка' },
+      ],
     },
   ],
 }
@@ -106,6 +124,24 @@ let itemsByOwner: Record<string, Item[]> = {
 let nextId = 100
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+/**
+ * Вариант без описания — ребро в никуда, в граф он не идёт. Отбрасываем такие молча:
+ * добавить строку и передумать — нормальный ход, ошибкой это делать незачем.
+ * Повтор того же описания — то же самое ребро, второй раз оно шансов не добавляет.
+ */
+function usableWishes(wish: Wish[]): Wish[] {
+  const seen = new Set<string>()
+
+  return wish
+    .map((variant) => ({ ...variant, description: variant.description.trim() }))
+    .filter((variant) => {
+      const key = variant.description.toLowerCase()
+      if (variant.description === '' || seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+}
 
 export async function getMyItems(): Promise<Item[]> {
   await delay(300)
@@ -116,7 +152,10 @@ export async function getMyItems(): Promise<Item[]> {
 export async function createItem(draft: ItemDraft): Promise<Item> {
   await delay(400)
 
-  const item: Item = { ...draft, id: String(nextId++), status: 'searching' }
+  const wish = usableWishes(draft.wish)
+  if (wish.length === 0) throw new Error('Не указано, что хочется взамен')
+
+  const item: Item = { ...draft, wish, id: String(nextId++), status: 'searching' }
   const ownerId = currentPersonaId()
   itemsByOwner = { ...itemsByOwner, [ownerId]: [item, ...(itemsByOwner[ownerId] ?? [])] }
   return item
@@ -124,13 +163,14 @@ export async function createItem(draft: ItemDraft): Promise<Item> {
 
 /**
  * Включить обмен у уже размещённого объявления — главный вход в сервис: человек не заводит
- * вещь заново, а указывает, что готов её обменять. Без желания включать нечего: желание —
- * это ребро графа, по которому ищется цепочка.
+ * вещь заново, а указывает, что готов её обменять. Без желания включать нечего: каждый
+ * вариант желания — отдельное ребро графа, по которому ищется цепочка.
  */
-export async function setItemWish(id: string, wish: Wish): Promise<Item> {
+export async function setItemWish(id: string, wish: Wish[]): Promise<Item> {
   await delay(400)
 
-  if (!wish.description.trim()) throw new Error('Не указано, что хочется взамен')
+  const usable = usableWishes(wish)
+  if (usable.length === 0) throw new Error('Не указано, что хочется взамен')
 
   const ownerId = currentPersonaId()
   const items = itemsByOwner[ownerId] ?? []
@@ -138,7 +178,11 @@ export async function setItemWish(id: string, wish: Wish): Promise<Item> {
   if (!item) throw new Error(`Объявление ${id} не найдено`)
 
   // Вещь, уже попавшую в цепочку, из неё не вынимаем — уточнение желания её не расколдовывает.
-  const updated: Item = { ...item, wish, status: item.status === 'idle' ? 'searching' : item.status }
+  const updated: Item = {
+    ...item,
+    wish: usable,
+    status: item.status === 'idle' ? 'searching' : item.status,
+  }
   itemsByOwner = { ...itemsByOwner, [ownerId]: items.map((i) => (i.id === id ? updated : i)) }
   return updated
 }
