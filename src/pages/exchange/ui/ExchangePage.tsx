@@ -1,43 +1,56 @@
-import { useQuery } from '@tanstack/react-query'
-import { useNavigate, useParams } from 'react-router-dom'
-import { chainKeys, DealStatusChip, getChain } from '@/entities/chain'
-import { Notice, Screen, ScreenHeader } from '@/shared/ui'
-import { ChainBoard } from '@/widgets/chain-board'
+import { useSearchParams } from 'react-router-dom'
+import { cx } from '@/shared/lib'
+import { Screen } from '@/shared/ui'
+import { DealsList, PendingDealBanner } from '@/widgets/deals-list'
+import { WishesList } from '@/widgets/wishes-list'
+
+type Tab = 'deals' | 'wishes'
+
+const TABS: { key: Tab; label: string }[] = [
+  { key: 'deals', label: 'Мои обмены' },
+  { key: 'wishes', label: 'Желания' },
+]
 
 /**
- * Один роут на всю сделку: предложение, ожидание, передача, завершение и распад —
- * это разные состояния одной цепочки, а не разные экраны.
+ * Раздел «Обмен» — наш сервис целиком: что уже собралось в цепочки и что человек ищет.
+ * Вкладка живёт в адресе (`?tab=wishes`), чтобы на неё можно было дать ссылку и вернуться
+ * кнопкой браузера; `replace` — чтобы переключение вкладок не копилось в истории.
  */
 export function ExchangePage() {
-  const { id = '' } = useParams()
-  const navigate = useNavigate()
-
-  const {
-    data: chain,
-    isPending,
-    isError,
-  } = useQuery({
-    queryKey: chainKeys.detail(id),
-    queryFn: () => getChain(id),
-    // Вебсокетов в MVP нет: пока цепочка в движении — подтягиваем ответы на предложение
-    // и отметки о получении, которые делают остальные участники.
-    refetchInterval: (query) => {
-      const status = query.state.data?.status
-      return status === 'formed' || status === 'active' ? 2000 : false
-    },
-  })
+  const [params, setParams] = useSearchParams()
+  const requested = params.get('tab')
+  const tab: Tab = TABS.some((t) => t.key === requested) ? (requested as Tab) : 'deals'
 
   return (
-    <Screen>
-      <ScreenHeader title="Цепочка обмена" onBack={() => navigate('/')}>
-        {chain && <DealStatusChip chain={chain} />}
-      </ScreenHeader>
+    <Screen width="wide">
+      <div className="flex flex-col gap-3.5 p-4">
+        <h1 className="text-[19px] font-bold">Обмен</h1>
 
-      <main className="flex flex-1 flex-col p-4">
-        {isPending && <Notice>Загрузка…</Notice>}
-        {isError && <Notice tone="error">Не удалось загрузить цепочку</Notice>}
-        {chain && <ChainBoard chain={chain} />}
-      </main>
+        {/* Баннер над вкладками: зовёт в цепочку независимо от того, что сейчас открыто. */}
+        <PendingDealBanner />
+
+        <nav aria-label="Разделы обмена" className="flex gap-6 border-b border-line-2">
+          {TABS.map((t) => (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => setParams(t.key === 'deals' ? {} : { tab: t.key }, { replace: true })}
+              aria-pressed={tab === t.key}
+              className={cx(
+                'relative rounded-sm pb-2.5 text-sm font-semibold outline-offset-4 focus-visible:outline-2 focus-visible:outline-brand',
+                tab === t.key ? 'text-ink' : 'text-ink-2',
+              )}
+            >
+              {t.label}
+              {tab === t.key && (
+                <span className="absolute inset-x-0 -bottom-px h-[2.5px] rounded bg-brand" />
+              )}
+            </button>
+          ))}
+        </nav>
+
+        {tab === 'deals' ? <DealsList /> : <WishesList />}
+      </div>
     </Screen>
   )
 }

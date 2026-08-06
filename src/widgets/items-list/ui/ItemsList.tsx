@@ -10,11 +10,16 @@ export function ItemsList() {
   })
 
   if (isPending) return <Notice>Загрузка…</Notice>
-  if (isError) return <Notice tone="error">Не удалось загрузить вещи</Notice>
+  if (isError) return <Notice tone="error">Не удалось загрузить объявления</Notice>
   if (data.length === 0) return <Notice>Пока нет объявлений — разместите первое.</Notice>
 
   return (
-    <div className="flex flex-col gap-3">
+    // Две колонки только с `xl`: карточка — компактная строка с кнопкой справа,
+    // и уже ниже ~470px на колонку заголовку не остаётся места. Третья колонка
+    // в контейнер страницы не влезает по той же причине.
+    // `grid-cols-1` задаётся явно: неявная колонка грида тянется по max-content,
+    // и длинный заголовок выносил бы карточку за край экрана.
+    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
       {data.map((item) => (
         <ItemCard
           key={item.id}

@@ -32,7 +32,7 @@ export function ChainCard({ chain }: { chain: Chain }) {
         </b>
         <span
           className={cx(
-            'text-[12.5px]',
+            'block truncate text-[12.5px]',
             needsMyAction(chain) ? 'font-semibold text-brand' : 'text-ink-2',
           )}
         >

@@ -18,7 +18,7 @@ export function WishesList() {
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
       {wanted.map((item) => (
         <WishCard key={item.id} item={item} />
       ))}

@@ -9,10 +9,10 @@
   --color-brand-soft: #e5f6ff;
   --color-on-brand: #ffffff;
 
-  /* акцентный набор Avito (лого-точки, бренд-акценты) */
-  --color-accent-green: #97cf26;
-  --color-accent-violet: #a169f7;
-  --color-accent-red: #ff6163;
+  /* акцентный набор Avito — цвета из официального лого (редизайн 2022) */
+  --color-accent-green: #04e061;
+  --color-accent-violet: #965eeb;
+  --color-accent-red: #ff4053;
 
   /* нейтрали — тёплый светло-серый, как поверхности Avito */
   --color-page: #f4f3f1;
@@ -45,6 +45,9 @@
   --shadow-pop: 0 8px 28px -10px rgba(10, 30, 50, 0.16);
 
   --font-sans: Arial, 'Helvetica Neue', Helvetica, 'Segoe UI', Roboto, sans-serif;
+
+  /* ширина контейнера Авито (утилита max-w-page): шапка и контент стоят на одной сетке */
+  --container-page: 1248px;
 }
 
 /* Только светлая тема — как веб-версия Avito. Системную тёмную не следуем,

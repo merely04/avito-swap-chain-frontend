@@ -1,13 +1,38 @@
 import type { ReactNode } from 'react'
+import { cx } from '../lib'
 import { IconChevronLeft } from './icons'
 
 /**
- * Каркас экрана: узкая колонка по центру, как в мобильном вебе Avito.
- * Высоту задаёт оболочка (`widgets/avito-shell`), экран растягивается в остаток —
- * иначе шапка Авито и экран сложились бы в два экрана высоты.
+ * Ширина контентной колонки:
+ * - `narrow` — экран одного действия (форма, цепочка): за окном не растёт, читается как лист;
+ * - `wide` — списки: занимают всю ширину контента, внутри раскладываются сеткой.
  */
-export function Screen({ children }: { children: ReactNode }) {
-  return <div className="mx-auto flex max-w-md flex-1 flex-col bg-card">{children}</div>
+export type ScreenWidth = 'narrow' | 'wide'
+
+interface ScreenProps {
+  width?: ScreenWidth
+  children: ReactNode
+}
+
+/**
+ * Каркас экрана. Высоту задаёт оболочка (`widgets/avito-shell`), экран растягивается
+ * в остаток — иначе шапка Авито и экран сложились бы в два экрана высоты.
+ * На узких окнах — белый лист во всю ширину, как в мобильном вебе Avito;
+ * на широких узкий экран становится карточкой на серой странице.
+ */
+export function Screen({ width = 'narrow', children }: ScreenProps) {
+  return (
+    <div
+      className={cx(
+        'mx-auto flex w-full flex-1 flex-col bg-card',
+        width === 'narrow'
+          ? 'max-w-2xl lg:flex-none lg:overflow-hidden lg:rounded-card lg:border lg:border-line lg:shadow-card'
+          : 'lg:bg-transparent',
+      )}
+    >
+      {children}
+    </div>
+  )
 }
 
 interface ScreenHeaderProps {

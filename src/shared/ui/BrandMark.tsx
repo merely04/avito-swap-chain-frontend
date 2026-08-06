@@ -1,16 +1,20 @@
 /**
- * Лого-точки Avito + слово-логотип + подпись раздела: лок-ап «Avito Обмен».
- * Подпись тоньше и тусклее знака — сервис внутри Авито, а не отдельный бренд.
+ * Лок-ап «Avito Обмен»: знак Авито + название раздела.
+ *
+ * Геометрия знака — из официального SVG: четыре круга разного размера по двум диагоналям,
+ * крупные зелёный и голубой против мелких фиолетового и красного. Не сетка 2×2.
+ * Подпись раздела тоньше и тусклее знака: сервис живёт внутри Авито, а не рядом с ним.
  */
 export function BrandMark({ label = 'Обмен' }: { label?: string }) {
   return (
     <span className="flex items-center gap-2 text-[17px] font-bold">
-      <span className="grid grid-cols-2 gap-[2px]">
-        <i className="size-1.5 rounded-full bg-brand" />
-        <i className="size-1.5 rounded-full bg-accent-green" />
-        <i className="size-1.5 rounded-full bg-accent-violet" />
-        <i className="size-1.5 rounded-full bg-accent-red" />
-      </span>
+      <svg viewBox="0 0 410 380" className="h-[17px] w-auto shrink-0" aria-hidden="true">
+        <circle cx="122.965" cy="256.711" r="122.559" className="fill-accent-green" />
+        <circle cx="306.803" cy="100.051" r="99.645" className="fill-brand" />
+        <circle cx="335.574" cy="289.745" r="74.058" className="fill-accent-red" />
+        <circle cx="146.404" cy="72.347" r="45.829" className="fill-accent-violet" />
+      </svg>
+
       <span className="tracking-tight">
         Avito
         <span className="ml-1.5 font-normal text-ink-2">{label}</span>

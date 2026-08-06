@@ -8,14 +8,17 @@ import type { Section } from '../lib/navigation'
 const DECOR = ['Сообщения', 'Кошелёк']
 
 const ITEMS_URL = '/'
-const EXCHANGE_URL = '/?tab=exchanges'
+const EXCHANGE_URL = '/exchange'
 
+// Одна разметка на оба вида: на узких окнах — чипы в горизонтальной ленте,
+// от `lg` — строки вертикального меню слева, как в кабинете Авито.
 const itemClass =
-  'shrink-0 rounded-chip px-2.5 py-1.5 text-[13px] font-semibold outline-offset-2 focus-visible:outline-2 focus-visible:outline-brand'
+  'shrink-0 rounded-chip px-2.5 py-1.5 text-[13px] font-semibold outline-offset-2 focus-visible:outline-2 focus-visible:outline-brand lg:w-full lg:rounded-btn lg:px-3 lg:py-2.5 lg:text-[14px]'
 
 /**
- * Меню личного кабинета. «Обмен» с бейджем — точка входа в сервис: не витрина,
- * а раздел, куда зовут ровно тогда, когда ход за пользователем.
+ * Меню личного кабинета — единственный верхний уровень навигации.
+ * «Обмен» с бейджем — точка входа в сервис: не витрина, а раздел,
+ * куда зовут ровно тогда, когда ход за пользователем.
  */
 export function CabinetNav({ section }: { section: Section }) {
   const { data } = useQuery({ queryKey: chainKeys.my(), queryFn: getMyChains })
@@ -23,19 +26,18 @@ export function CabinetNav({ section }: { section: Section }) {
 
   const isExchange = section === 'exchange'
 
-  // Подсветка держится на разделе целиком (желания и новое объявление — часть объявлений),
-  // а current достаётся только пункту, который ведёт ровно на открытую страницу.
-  const { pathname, search } = useLocation()
-  const here = `${pathname}${search}`
+  // Подсветка держится на разделе целиком (новое объявление и включение обмена — часть
+  // объявлений), а current достаётся только пункту, который ведёт ровно на открытую страницу.
+  const { pathname } = useLocation()
 
   return (
     <nav
       aria-label="Личный кабинет"
-      className="flex gap-1 overflow-x-auto border-b border-line-2 px-3 py-2"
+      className="flex gap-1 overflow-x-auto px-3 py-2 max-lg:border-b max-lg:border-line-2 lg:sticky lg:top-6 lg:w-56 lg:shrink-0 lg:flex-col lg:gap-0.5 lg:self-start lg:overflow-visible lg:rounded-card lg:border lg:border-line lg:bg-card lg:p-2 lg:shadow-card"
     >
       <Link
         to={ITEMS_URL}
-        aria-current={here === ITEMS_URL ? 'page' : undefined}
+        aria-current={pathname === ITEMS_URL ? 'page' : undefined}
         className={cx(itemClass, isExchange ? 'text-ink-2 hover:bg-line-2' : 'bg-line-2 text-ink')}
       >
         Мои объявления
@@ -43,7 +45,7 @@ export function CabinetNav({ section }: { section: Section }) {
 
       <Link
         to={EXCHANGE_URL}
-        aria-current={here === EXCHANGE_URL ? 'page' : undefined}
+        aria-current={pathname === EXCHANGE_URL ? 'page' : undefined}
         className={cx(
           itemClass,
           'flex items-center gap-1.5',
@@ -54,7 +56,7 @@ export function CabinetNav({ section }: { section: Section }) {
         {waiting > 0 && (
           <span
             title="Ждут вашего действия"
-            className="grid min-w-[18px] place-items-center rounded-full bg-brand px-1 text-[10.5px] leading-[18px] font-bold text-on-brand"
+            className="grid min-w-[18px] place-items-center rounded-full bg-brand px-1 text-[10.5px] leading-[18px] font-bold text-on-brand lg:ml-auto"
           >
             {waiting}
           </span>

@@ -28,7 +28,7 @@ export function ItemCard({ item, action }: ItemCardProps) {
 
       <div className="min-w-0 flex-1">
         <b className="block truncate text-[14.5px] font-bold">{item.title}</b>
-        <span className="text-[12.5px] text-ink-2">
+        <span className="block truncate text-[12.5px] text-ink-2">
           {item.category} · {CONDITION_LABEL[item.condition]}
         </span>
       </div>

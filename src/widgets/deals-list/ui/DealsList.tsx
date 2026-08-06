@@ -17,7 +17,7 @@ export function DealsList() {
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
       {sortByUrgency(data).map((chain) => (
         <Link
           key={chain.id}

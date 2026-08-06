@@ -21,7 +21,7 @@ export function CreateOfferPage() {
 
   return (
     <Screen>
-      <ScreenHeader title={step === 1 ? 'Новая вещь' : 'Что хотите взамен'} onBack={goBack}>
+      <ScreenHeader title={step === 1 ? 'Новое объявление' : 'Что хотите взамен'} onBack={goBack}>
         <Chip>Шаг {step} из 2</Chip>
       </ScreenHeader>
 

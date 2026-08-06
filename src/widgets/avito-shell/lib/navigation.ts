@@ -1,5 +1,5 @@
-/** Раздел личного кабинета — общий источник и для подсветки меню, и для крошек. */
-export type Section = 'items' | 'wishes' | 'exchange' | 'new-item'
+/** Раздел кабинета — единственный верхний уровень навигации: им подсвечивается меню. */
+export type Section = 'items' | 'exchange'
 
 export interface Crumb {
   label: string
@@ -8,29 +8,24 @@ export interface Crumb {
 }
 
 /**
- * Раздел по текущему роуту. Обмены живут в двух местах — вкладка дашборда
- * (`/?tab=exchanges`) и сама цепочка (`/exchange/:id`), — но для меню это один раздел.
+ * Раздел по текущему роуту. «Обмен» — это и список сделок (`/exchange`),
+ * и открытая цепочка (`/exchange/:id`); всё остальное живёт в объявлениях.
  */
-export function getSection(pathname: string, tab: string | null): Section {
-  if (pathname.startsWith('/exchange')) return 'exchange'
-  if (pathname.startsWith('/items/new')) return 'new-item'
-  if (tab === 'exchanges') return 'exchange'
-  if (tab === 'wishes') return 'wishes'
-  return 'items'
+export function getSection(pathname: string): Section {
+  return pathname === '/exchange' || pathname.startsWith('/exchange/') ? 'exchange' : 'items'
 }
 
-const SECTION_LABEL: Record<Section, string | null> = {
-  items: null,
-  wishes: 'Желания',
-  exchange: 'Обмен',
-  'new-item': 'Новое объявление',
-}
+const AVITO: Crumb = { label: 'Авито' }
+const ITEMS: Crumb = { label: 'Мои объявления', to: '/' }
+const EXCHANGE: Crumb = { label: 'Обмен', to: '/exchange' }
 
-/** Крошки «Авито → Мои объявления → …»: обмен — раздел кабинета, а не отдельный сервис. */
-export function getBreadcrumbs(section: Section): Crumb[] {
-  const label = SECTION_LABEL[section]
-
-  return label === null
-    ? [{ label: 'Авито' }, { label: 'Мои объявления' }]
-    : [{ label: 'Авито' }, { label: 'Мои объявления', to: '/' }, { label }]
+/**
+ * Крошки — только на вложенных экранах: на верхнем уровне их работу делает меню
+ * кабинета, и повторять его строкой ниже незачем. Пустой массив = крошек нет.
+ */
+export function getBreadcrumbs(pathname: string): Crumb[] {
+  if (pathname === '/items/new') return [AVITO, ITEMS, { label: 'Новое объявление' }]
+  if (/^\/items\/[^/]+\/barter$/.test(pathname)) return [AVITO, ITEMS, { label: 'Готов обменять' }]
+  if (/^\/exchange\/[^/]+$/.test(pathname)) return [AVITO, EXCHANGE, { label: 'Цепочка' }]
+  return []
 }
