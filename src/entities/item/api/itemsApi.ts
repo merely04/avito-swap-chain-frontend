@@ -4,6 +4,11 @@ import type { Item, Wish } from '../model/types'
 /** Ключи кэша TanStack Query для вещей. */
 export const itemKeys = {
   my: () => ['my-items'] as const,
+  /**
+   * Подсказки желания зависят и от вещи, и от уже выбранных вариантов: выбранный вариант
+   * из подсказок уходит, а на его место встаёт следующий кандидат.
+   */
+  suggestions: (title: string, chosen: string[]) => ['wish-suggestions', title, chosen] as const,
 }
 
 /** Что пользователь заполняет в форме: вещь без служебных полей. */
@@ -146,6 +151,18 @@ function usableWishes(wish: Wish[]): Wish[] {
 export async function getMyItems(): Promise<Item[]> {
   await delay(300)
   return itemsByOwner[currentPersonaId()] ?? []
+}
+
+/**
+ * Объявления остальных пользователей — то, из чего вообще может собраться цепочка.
+ * Наружу из entity не отдаём: это внутренность мока, на бэке такой отбор делает поиск.
+ */
+export function itemsOfOthers(): Item[] {
+  const me = currentPersonaId()
+
+  return Object.entries(itemsByOwner)
+    .filter(([ownerId]) => ownerId !== me)
+    .flatMap(([, items]) => items)
 }
 
 /** Новая вещь сразу уходит в подбор — сервис ищет для неё цепочку. */

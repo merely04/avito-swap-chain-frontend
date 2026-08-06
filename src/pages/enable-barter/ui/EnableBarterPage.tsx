@@ -24,7 +24,7 @@ export function EnableBarterPage() {
 
         {item && (
           <DescribeWishForm
-            give={item.title}
+            give={item}
             submitLabel="Включить обмен"
             pendingLabel="Включаем…"
             onSubmit={(wish) => setItemWish(item.id, wish)}

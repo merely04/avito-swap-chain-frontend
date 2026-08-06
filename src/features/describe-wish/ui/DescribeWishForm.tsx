@@ -1,6 +1,6 @@
 import { useRef, useState, type SubmitEvent } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { CATEGORIES, itemKeys, type Wish } from '@/entities/item'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { CATEGORIES, itemKeys, suggestWish, type GivenItem, type Wish } from '@/entities/item'
 import { Button, IconClose, IconPlus, Input, Select } from '@/shared/ui'
 
 /** Строка формы: вариант желания + стабильный ключ, чтобы удаление не путало поля React. */
@@ -17,8 +17,8 @@ const emptyRow = (key: number): WishRow => ({ key, category: CATEGORIES[0], desc
 const rowLabel = (index: number) => (index === 0 ? 'Что хотите взамен' : `Вариант ${index + 1}`)
 
 interface DescribeWishFormProps {
-  /** Что человек отдаёт — показываем, чтобы желание указывали осознанно. */
-  give: string
+  /** Что человек отдаёт: название показываем, категорию используем для подсказок. */
+  give: GivenItem
   submitLabel: string
   pendingLabel: string
   /**
@@ -50,6 +50,17 @@ export function DescribeWishForm({
     .map(({ category, description }) => ({ category, description: description.trim() }))
     .filter((wish) => wish.description !== '')
 
+  // Подсказки желания — из поисков и избранного человека, см. `suggestWish`. Уже выбранные
+  // варианты уходят из подсказок, поэтому они и лежат в ключе запроса.
+  const { data: suggestions = [] } = useQuery({
+    queryKey: itemKeys.suggestions(
+      give.title,
+      filled.map((wish) => wish.description),
+    ),
+    queryFn: () => suggestWish(give, filled),
+    placeholderData: (previous) => previous,
+  })
+
   const { mutate, isPending, isError } = useMutation({
     mutationFn: () => onSubmit(filled),
     onSuccess: () => {
@@ -61,6 +72,21 @@ export function DescribeWishForm({
   const patch = (key: number, part: Partial<Wish>) =>
     setRows((prev) => prev.map((row) => (row.key === key ? { ...row, ...part } : row)))
 
+  // Есть куда положить ещё один вариант: свободная строка или место под новую.
+  const hasRoom = rows.length < MAX_VARIANTS || rows.some((row) => row.description.trim() === '')
+
+  /** Подсказка занимает первую пустую строку, а если пустых нет — становится новым вариантом. */
+  const addSuggestion = (suggestion: Wish) => {
+    const key = nextKey.current++
+
+    setRows((prev) => {
+      const empty = prev.find((row) => row.description.trim() === '')
+      if (empty) return prev.map((row) => (row.key === empty.key ? { ...row, ...suggestion } : row))
+
+      return prev.length < MAX_VARIANTS ? [...prev, { ...suggestion, key }] : prev
+    })
+  }
+
   const submit = (event: SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
     mutate()
@@ -69,8 +95,33 @@ export function DescribeWishForm({
   return (
     <form onSubmit={submit} className="flex flex-1 flex-col gap-3.5">
       <p className="text-[13.5px] text-ink-2">
-        Отдаёте: <b className="font-bold text-ink">{give}</b>
+        Отдаёте: <b className="font-bold text-ink">{give.title}</b>
       </p>
+
+      {suggestions.length > 0 && hasRoom && (
+        <div className="flex flex-col gap-2 rounded-card border border-line bg-card p-3">
+          <span className="font-sans text-xs font-semibold text-ink-2">Может подойти</span>
+
+          <div className="flex flex-wrap gap-1.5">
+            {suggestions.map((suggestion) => (
+              <button
+                key={suggestion.description}
+                type="button"
+                onClick={() => addSuggestion(suggestion)}
+                className="inline-flex cursor-pointer items-center gap-1 rounded-chip bg-brand-soft px-2.5 py-1.5 font-sans text-[12.5px] font-semibold text-brand outline-offset-2 transition-colors hover:bg-brand hover:text-on-brand focus-visible:outline-2 focus-visible:outline-brand"
+              >
+                <IconPlus size={13} />
+                {suggestion.description}
+              </button>
+            ))}
+          </div>
+
+          <p className="text-[12px] leading-relaxed text-ink-3">
+            Из того, что вы искали и сохраняли в избранное, плюс объявления в категории «
+            {give.category}». Все варианты сейчас есть у других пользователей.
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-col gap-3">
         {rows.map((row, index) => (

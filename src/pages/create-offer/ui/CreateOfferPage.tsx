@@ -28,7 +28,7 @@ export function CreateOfferPage() {
       <main className="flex flex-1 flex-col p-4">
         {step === 2 && values ? (
           <DescribeWishForm
-            give={values.title}
+            give={values}
             submitLabel="Опубликовать и искать обмен"
             pendingLabel="Публикуем…"
             onSubmit={(wish) => createItem({ ...values, wish })}
