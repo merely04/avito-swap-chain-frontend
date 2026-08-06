@@ -10,6 +10,7 @@ export {
 } from './api/chainApi'
 export {
   findMe,
+  displayName,
   findNeighbours,
   findDecliner,
   needsMyAction,

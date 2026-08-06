@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { SwitchPersona } from '@/features/switch-persona'
 import { BrandMark, Button } from '@/shared/ui'
 
 /**
@@ -16,25 +17,10 @@ export function ShellHeader() {
           <BrandMark />
         </Link>
 
-        {/* Правый слот шапки: сюда встанет переключатель демо-персон (features/switch-persona),
-            он же подставит имя — до него аккаунт безымянный, как участник «Вы» в моках. */}
-        <span
-          className="ml-auto grid size-8 place-items-center rounded-full bg-brand-soft text-brand"
-          title="Личный кабинет"
-        >
-          <svg
-            width="17"
-            height="17"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
-          </svg>
-        </span>
+        {/* Место аккаунта: в демо здесь переключатель персон — он же показывает, кто вошёл. */}
+        <div className="ml-auto">
+          <SwitchPersona />
+        </div>
       </div>
 
       <div className="flex gap-2">

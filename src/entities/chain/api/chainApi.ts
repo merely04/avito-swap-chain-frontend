@@ -1,4 +1,5 @@
-import type { Chain, ParticipantStatus } from '../model/types'
+import { currentPersonaId, PERSONAS, type Persona } from '@/shared/model/persona'
+import type { Chain, ChainParticipant, ParticipantStatus } from '../model/types'
 
 /**
  * Ключи кэша TanStack Query. Иерархия не случайна: `my` — префикс `detail`,
@@ -13,35 +14,33 @@ export const chainKeys = {
 /** Ответ участника на предложение обмена. */
 export type ChainDecision = Extract<ParticipantStatus, 'confirmed' | 'declined'>
 
+const [DASHA, MARK, LENA] = PERSONAS
+
+/** Участник-персона: имя и рейтинг берём из общего реестра, чтобы они не разъезжались. */
+const of = (
+  persona: Persona,
+  givesItem: ChainParticipant['givesItem'],
+  status: ParticipantStatus,
+): ChainParticipant => ({
+  userId: persona.id,
+  name: persona.name,
+  rating: persona.rating,
+  givesItem,
+  status,
+})
+
 // Мок вместо Go-API: цепочки живут в модуле, мутации меняют их так же, как это делал бы
 // бэкенд. Меняется на реальные HTTP-вызовы без правок компонентов.
 // Порядок участников = обход цикла: participants[i] отдаёт вещь participants[i + 1].
+// Флага `isMe` в данных нет: чья это цепочка — вопрос точки зрения, см. `asSeenBy`.
 let chains: Chain[] = [
   {
     id: 'c1',
     status: 'formed',
     participants: [
-      {
-        userId: 'me',
-        name: 'Вы',
-        givesItem: { id: '1', title: 'Горный велосипед' },
-        status: 'pending',
-        isMe: true,
-      },
-      {
-        userId: 'u2',
-        name: 'Марк',
-        rating: 4.9,
-        givesItem: { id: '21', title: 'Наушники' },
-        status: 'confirmed',
-      },
-      {
-        userId: 'u3',
-        name: 'Лена',
-        rating: 4.7,
-        givesItem: { id: '31', title: 'Плёночный фотоаппарат' },
-        status: 'pending',
-      },
+      of(DASHA, { id: '1', title: 'Горный велосипед' }, 'pending'),
+      of(MARK, { id: '21', title: 'Наушники' }, 'confirmed'),
+      of(LENA, { id: '31', title: 'Плёночный фотоаппарат' }, 'pending'),
       {
         userId: 'u4',
         name: 'Аня',
@@ -55,13 +54,7 @@ let chains: Chain[] = [
     id: 'c2',
     status: 'active',
     participants: [
-      {
-        userId: 'me',
-        name: 'Вы',
-        givesItem: { id: '5', title: 'Кофеварка' },
-        status: 'confirmed',
-        isMe: true,
-      },
+      of(DASHA, { id: '5', title: 'Кофеварка' }, 'confirmed'),
       {
         userId: 'u5',
         name: 'Игорь',
@@ -82,13 +75,7 @@ let chains: Chain[] = [
     id: 'c3',
     status: 'completed',
     participants: [
-      {
-        userId: 'me',
-        name: 'Вы',
-        givesItem: { id: '7', title: 'Настольная лампа' },
-        status: 'confirmed',
-        isMe: true,
-      },
+      of(LENA, { id: '32', title: 'Настольная лампа' }, 'confirmed'),
       {
         userId: 'u7',
         name: 'Паша',
@@ -127,32 +114,50 @@ function replace(id: string, update: (chain: Chain) => Chain) {
   chains = chains.map((chain) => (chain.id === id ? update(chain) : chain))
 }
 
-const withMyStatus = (chain: Chain, status: ParticipantStatus): Chain => ({
+/**
+ * Цепочка глазами конкретного пользователя: `isMe` не лежит в данных, а проставляется
+ * на ответе — ровно так же поступил бы бэкенд, зная, кто именно запрашивает.
+ */
+const asSeenBy = (chain: Chain, personaId: string): Chain => ({
   ...chain,
-  participants: chain.participants.map((p) => (p.isMe ? { ...p, status } : p)),
+  participants: chain.participants.map((p) => (p.userId === personaId ? { ...p, isMe: true } : p)),
 })
 
+const withPersonaStatus = (chain: Chain, personaId: string, status: ParticipantStatus): Chain => ({
+  ...chain,
+  participants: chain.participants.map((p) => (p.userId === personaId ? { ...p, status } : p)),
+})
+
+/** Обмены, в которых участвует текущий пользователь, — чужие в кабинет не попадают. */
 export async function getMyChains(): Promise<Chain[]> {
   await delay(300)
+  const personaId = currentPersonaId()
+
   return chains
+    .filter((chain) => chain.participants.some((p) => p.userId === personaId))
+    .map((chain) => asSeenBy(chain, personaId))
 }
 
 export async function getChain(id: string): Promise<Chain> {
   await delay(250)
-  return find(id)
+  return asSeenBy(find(id), currentPersonaId())
 }
 
 /** Подтвердить или отклонить участие. Отказ любого участника распускает цепочку. */
 export async function respondToChain(id: string, decision: ChainDecision): Promise<void> {
   await delay(400)
   find(id)
+  const personaId = currentPersonaId()
 
   if (decision === 'declined') {
-    replace(id, (chain) => ({ ...withMyStatus(chain, 'declined'), status: 'dissolved' }))
+    replace(id, (chain) => ({
+      ...withPersonaStatus(chain, personaId, 'declined'),
+      status: 'dissolved',
+    }))
     return
   }
 
-  replace(id, (chain) => withMyStatus(chain, 'confirmed'))
+  replace(id, (chain) => withPersonaStatus(chain, personaId, 'confirmed'))
 
   // Демо-имитация ответа остальных участников: на бэке это придёт обычным refetch.
   setTimeout(() => {
@@ -171,7 +176,10 @@ export async function respondToChain(id: string, decision: ChainDecision): Promi
 export async function leaveChain(id: string): Promise<void> {
   await delay(400)
   find(id)
-  replace(id, (chain) => ({ ...withMyStatus(chain, 'declined'), status: 'dissolved' }))
+  replace(id, (chain) => ({
+    ...withPersonaStatus(chain, currentPersonaId(), 'declined'),
+    status: 'dissolved',
+  }))
 }
 
 /** Подтвердить получение вещи. В MVP закрывает всю цепочку. */

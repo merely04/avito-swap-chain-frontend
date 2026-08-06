@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import type { Chain, ChainParticipant, ChainStatus, ParticipantStatus } from '../model/types'
-import { countConfirmed, findDecliner, findMe, findNeighbours, needsMyAction } from './participants'
+import {
+  countConfirmed,
+  displayName,
+  findDecliner,
+  findMe,
+  findNeighbours,
+  needsMyAction,
+} from './participants'
 
 const participant = (
   userId: string,
@@ -40,6 +47,16 @@ describe('findMe', () => {
     const first = participant('me-1', 'pending', true)
     const second = participant('me-2', 'confirmed', true)
     expect(findMe(chain([first, second]))).toBe(first)
+  })
+})
+
+describe('displayName', () => {
+  it('себя пользователь читает как «Вы», а не по имени', () => {
+    expect(displayName(participant('me', 'pending', true))).toBe('Вы')
+  })
+
+  it('остальных — по имени из данных', () => {
+    expect(displayName(participant('u1', 'confirmed'))).toBe('Участник u1')
   })
 })
 

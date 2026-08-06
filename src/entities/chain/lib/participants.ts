@@ -4,6 +4,10 @@ import type { Chain, ChainParticipant } from '../model/types'
 export const findMe = (chain: Chain): ChainParticipant | undefined =>
   chain.participants.find((p) => p.isMe)
 
+/** Подпись участника: себя человек читает как «Вы» — это следует из `isMe`, а не из имени. */
+export const displayName = (participant: ChainParticipant): string =>
+  participant.isMe ? 'Вы' : participant.name
+
 /** Ход за пользователем: цепочка не поедет, пока он не ответит. */
 export const needsMyAction = (chain: Chain): boolean =>
   chain.status === 'formed' && findMe(chain)?.status === 'pending'

@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react'
 import { cx } from '@/shared/lib'
 import { IconCheck, IconClock, IconClose, IconPlus } from '@/shared/ui'
+import { displayName } from '../lib/participants'
 import type { ChainParticipant, ParticipantStatus } from '../model/types'
 
 const STATUS_VIEW: Record<
@@ -55,7 +56,7 @@ export function ParticipantStatusList({ participants }: { participants: ChainPar
 
             <div className="min-w-0 flex-1">
               <b className={cx('block truncate text-[13.5px] font-bold', p.isMe && 'text-brand')}>
-                {p.name}
+                {displayName(p)}
                 {p.rating != null && (
                   <span className="font-normal text-ink-3"> · {p.rating.toFixed(1)} ★</span>
                 )}

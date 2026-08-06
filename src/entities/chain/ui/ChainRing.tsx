@@ -1,4 +1,5 @@
 import { cx } from '@/shared/lib'
+import { displayName } from '../lib/participants'
 import type { ChainParticipant } from '../model/types'
 
 const BOX = { width: 280, height: 290 }
@@ -85,7 +86,7 @@ export function ChainRing({ participants }: { participants: ChainParticipant[] }
                 p.isMe ? 'text-brand' : 'text-ink-2',
               )}
             >
-              {p.name}
+              {displayName(p)}
               <span className="block font-normal text-ink-3">{p.givesItem.title}</span>
             </small>
           </div>
