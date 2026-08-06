@@ -1,9 +1,13 @@
 import type { ReactNode } from 'react'
 import { IconChevronLeft } from './icons'
 
-/** Каркас экрана: узкая колонка по центру, как в мобильном вебе Avito. */
+/**
+ * Каркас экрана: узкая колонка по центру, как в мобильном вебе Avito.
+ * Высоту задаёт оболочка (`widgets/avito-shell`), экран растягивается в остаток —
+ * иначе шапка Авито и экран сложились бы в два экрана высоты.
+ */
 export function Screen({ children }: { children: ReactNode }) {
-  return <div className="mx-auto flex min-h-svh max-w-md flex-col bg-card">{children}</div>
+  return <div className="mx-auto flex max-w-md flex-1 flex-col bg-card">{children}</div>
 }
 
 interface ScreenHeaderProps {
