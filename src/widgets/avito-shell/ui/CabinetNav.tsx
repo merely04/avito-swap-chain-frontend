@@ -53,7 +53,7 @@ export function CabinetNav({ section }: { section: Section }) {
         Обмен
         {waiting > 0 && (
           <span
-            title="Ждут вашего решения"
+            title="Ждут вашего действия"
             className="grid min-w-[18px] place-items-center rounded-full bg-brand px-1 text-[10.5px] leading-[18px] font-bold text-on-brand"
           >
             {waiting}

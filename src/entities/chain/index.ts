@@ -15,6 +15,7 @@ export {
   findDecliner,
   needsMyAction,
   countConfirmed,
+  countReceipts,
   type Neighbours,
 } from './lib/participants'
 export { ChainCard } from './ui/ChainCard'

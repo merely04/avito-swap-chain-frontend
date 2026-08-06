@@ -2,8 +2,16 @@ import { describe, expect, it } from 'vitest'
 import type { Chain, ChainParticipant, ChainStatus, ParticipantStatus } from '@/entities/chain'
 import { sortByUrgency } from './sortByUrgency'
 
-/** Цепочка из двоих: я и ещё один участник. `myStatus === undefined` → меня в ней нет. */
-const chain = (id: string, status: ChainStatus, myStatus?: ParticipantStatus): Chain => ({
+/**
+ * Цепочка из двоих: я и ещё один участник. `myStatus === undefined` → меня в ней нет.
+ * `myReceipt` — отметил ли я получение вещи, важно на стадии передачи.
+ */
+const chain = (
+  id: string,
+  status: ChainStatus,
+  myStatus?: ParticipantStatus,
+  myReceipt = false,
+): Chain => ({
   id,
   status,
   participants: [
@@ -12,6 +20,7 @@ const chain = (id: string, status: ChainStatus, myStatus?: ParticipantStatus): C
       name: 'Марк',
       givesItem: { id: 'item-u1', title: 'Наушники' },
       status: 'confirmed',
+      receiptConfirmed: false,
     },
     ...(myStatus
       ? [
@@ -20,6 +29,7 @@ const chain = (id: string, status: ChainStatus, myStatus?: ParticipantStatus): C
             name: 'Вы',
             givesItem: { id: 'item-me', title: 'Велосипед' },
             status: myStatus,
+            receiptConfirmed: myReceipt,
             isMe: true,
           } satisfies ChainParticipant,
         ]
@@ -34,7 +44,7 @@ describe('sortByUrgency', () => {
     const input = [
       chain('completed', 'completed', 'confirmed'),
       chain('urgent', 'formed', 'pending'),
-      chain('active', 'active', 'confirmed'),
+      chain('active', 'active', 'confirmed', true),
     ]
     expect(ids(sortByUrgency(input))).toEqual(['urgent', 'active', 'completed'])
   })
@@ -43,7 +53,7 @@ describe('sortByUrgency', () => {
     const input = [
       chain('completed', 'completed', 'confirmed'),
       chain('dissolved', 'dissolved', 'declined'),
-      chain('active', 'active', 'confirmed'),
+      chain('active', 'active', 'confirmed', true),
       chain('formed', 'formed', 'confirmed'),
     ]
     expect(ids(sortByUrgency(input))).toEqual(['formed', 'active', 'dissolved', 'completed'])
@@ -64,16 +74,24 @@ describe('sortByUrgency', () => {
     expect(ids(sortByUrgency(input))).toEqual(['urgent', 'stranger'])
   })
 
-  it('pending в уже запущенной цепочке не делает её срочной', () => {
-    const input = [chain('active', 'active', 'pending'), chain('formed', 'formed', 'confirmed')]
+  it('в запущенной цепочке срочность решает отметка получения, а не статус ответа', () => {
+    const input = [
+      chain('active', 'active', 'pending', true),
+      chain('formed', 'formed', 'confirmed'),
+    ]
     expect(ids(sortByUrgency(input))).toEqual(['formed', 'active'])
+  })
+
+  it('запущенная цепочка срочная, пока я не отметил получение', () => {
+    const input = [chain('formed', 'formed', 'confirmed'), chain('handoff', 'active', 'confirmed')]
+    expect(ids(sortByUrgency(input))).toEqual(['handoff', 'formed'])
   })
 
   it('при равной срочности сохраняет исходный порядок (сортировка стабильна)', () => {
     const input = [
-      chain('a', 'active', 'confirmed'),
-      chain('b', 'active', 'confirmed'),
-      chain('c', 'active', 'confirmed'),
+      chain('a', 'active', 'confirmed', true),
+      chain('b', 'active', 'confirmed', true),
+      chain('c', 'active', 'confirmed', true),
     ]
     expect(ids(sortByUrgency(input))).toEqual(['a', 'b', 'c'])
   })

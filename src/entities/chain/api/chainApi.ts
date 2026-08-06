@@ -1,4 +1,5 @@
 import { currentPersonaId, PERSONAS, type Persona } from '@/shared/model/persona'
+import { confirmReceiptFor } from '../lib/participants'
 import type { Chain, ChainParticipant, ParticipantStatus } from '../model/types'
 
 /**
@@ -21,12 +22,14 @@ const of = (
   persona: Persona,
   givesItem: ChainParticipant['givesItem'],
   status: ParticipantStatus,
+  receiptConfirmed = false,
 ): ChainParticipant => ({
   userId: persona.id,
   name: persona.name,
   rating: persona.rating,
   givesItem,
   status,
+  receiptConfirmed,
 })
 
 // Мок вместо Go-API: цепочки живут в модуле, мутации меняют их так же, как это делал бы
@@ -47,9 +50,12 @@ let chains: Chain[] = [
         rating: 5.0,
         givesItem: { id: '41', title: 'Смартфон' },
         status: 'confirmed',
+        receiptConfirmed: false,
       },
     ],
   },
+  // Идущая передача: Игорь свою вещь уже получил, Соня — ещё нет. Значит после отметки
+  // текущего пользователя цепочка не закроется — видно состояние «жду остальных».
   {
     id: 'c2',
     status: 'active',
@@ -61,6 +67,7 @@ let chains: Chain[] = [
         rating: 4.8,
         givesItem: { id: '51', title: 'Акустическая гитара' },
         status: 'confirmed',
+        receiptConfirmed: true,
       },
       {
         userId: 'u6',
@@ -68,6 +75,7 @@ let chains: Chain[] = [
         rating: 4.6,
         givesItem: { id: '61', title: 'Электросамокат' },
         status: 'confirmed',
+        receiptConfirmed: false,
       },
     ],
   },
@@ -75,13 +83,14 @@ let chains: Chain[] = [
     id: 'c3',
     status: 'completed',
     participants: [
-      of(LENA, { id: '32', title: 'Настольная лампа' }, 'confirmed'),
+      of(LENA, { id: '32', title: 'Настольная лампа' }, 'confirmed', true),
       {
         userId: 'u7',
         name: 'Паша',
         rating: 4.9,
         givesItem: { id: '71', title: 'Монитор 24"' },
         status: 'confirmed',
+        receiptConfirmed: true,
       },
       {
         userId: 'u8',
@@ -89,6 +98,7 @@ let chains: Chain[] = [
         rating: 5.0,
         givesItem: { id: '81', title: 'Плед' },
         status: 'confirmed',
+        receiptConfirmed: true,
       },
       {
         userId: 'u9',
@@ -96,6 +106,7 @@ let chains: Chain[] = [
         rating: 4.5,
         givesItem: { id: '91', title: 'Кресло-мешок' },
         status: 'confirmed',
+        receiptConfirmed: true,
       },
     ],
   },
@@ -182,9 +193,24 @@ export async function leaveChain(id: string): Promise<void> {
   }))
 }
 
-/** Подтвердить получение вещи. В MVP закрывает всю цепочку. */
+/**
+ * Подтвердить получение вещи. Отмечается только текущий пользователь: цепочка закроется,
+ * когда получение подтвердят все — обмен состоялся только тогда, когда его закрыли с обеих сторон.
+ */
 export async function confirmReceipt(id: string): Promise<void> {
   await delay(400)
   find(id)
-  replace(id, (chain) => ({ ...chain, status: 'completed' }))
+  replace(id, (chain) => confirmReceiptFor(chain, currentPersonaId()))
+
+  // Демо-имитация отметки остальных участников: на бэке это придёт обычным refetch.
+  setTimeout(() => {
+    // За это время получение мог отметить последний участник — закрытую цепочку не трогаем.
+    if (find(id).status !== 'active') return
+
+    replace(id, (chain) => ({
+      ...chain,
+      status: 'completed',
+      participants: chain.participants.map((p) => ({ ...p, receiptConfirmed: true })),
+    }))
+  }, 2500)
 }

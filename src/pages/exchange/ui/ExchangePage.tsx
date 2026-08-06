@@ -19,8 +19,12 @@ export function ExchangePage() {
   } = useQuery({
     queryKey: chainKeys.detail(id),
     queryFn: () => getChain(id),
-    // Вебсокетов в MVP нет: пока идёт согласование — подтягиваем ответы остальных.
-    refetchInterval: (query) => (query.state.data?.status === 'formed' ? 2000 : false),
+    // Вебсокетов в MVP нет: пока цепочка в движении — подтягиваем ответы на предложение
+    // и отметки о получении, которые делают остальные участники.
+    refetchInterval: (query) => {
+      const status = query.state.data?.status
+      return status === 'formed' || status === 'active' ? 2000 : false
+    },
   })
 
   return (

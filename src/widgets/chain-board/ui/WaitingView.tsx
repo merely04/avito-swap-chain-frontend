@@ -3,6 +3,7 @@ import { LeaveChain } from '@/features/leave-chain'
 import { Banner, IconCheck } from '@/shared/ui'
 import type { ChainViewProps } from '../model/types'
 import { BoardFooter } from './BoardFooter'
+import { ChainProgress } from './ChainProgress'
 
 /** FORMED + я CONFIRMED: ход не за мной — ждём остальных участников. */
 export function WaitingView({ chain, me, neighbours }: ChainViewProps) {
@@ -17,27 +18,7 @@ export function WaitingView({ chain, me, neighbours }: ChainViewProps) {
 
       <ExchangeSummary give={me.givesItem} receive={neighbours.giver.givesItem} reserved />
 
-      <div>
-        <div className="mb-1.5 flex justify-between text-[12.5px] font-semibold text-ink-2">
-          <span>Согласовано</span>
-          <span className="text-ink">
-            {confirmed} из {total}
-          </span>
-        </div>
-        <div
-          className="h-2 overflow-hidden rounded-full bg-line-2"
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={total}
-          aria-valuenow={confirmed}
-          aria-label="Согласование участников"
-        >
-          <div
-            className="h-full rounded-full bg-brand transition-[width] duration-300"
-            style={{ width: `${(confirmed / total) * 100}%` }}
-          />
-        </div>
-      </div>
+      <ChainProgress label="Согласовано" value={confirmed} total={total} />
 
       <ParticipantStatusList participants={chain.participants} />
 

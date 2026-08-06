@@ -7,6 +7,7 @@ const other = (userId: string, status: ParticipantStatus = 'confirmed'): ChainPa
   name: `Участник ${userId}`,
   givesItem: { id: `item-${userId}`, title: `Вещь ${userId}` },
   status,
+  receiptConfirmed: false,
 })
 
 /** Цепочка из троих, где я — второй. `myStatus === undefined` → меня в цепочке нет. */
@@ -22,6 +23,7 @@ const chainWithMe = (status: ChainStatus, myStatus?: ParticipantStatus): Chain =
             name: 'Вы',
             givesItem: { id: 'item-me', title: 'Велосипед' },
             status: myStatus,
+            receiptConfirmed: false,
             isMe: true,
           } satisfies ChainParticipant,
         ]

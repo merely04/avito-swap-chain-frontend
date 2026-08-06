@@ -10,7 +10,7 @@ function hintFor(chain: Chain): string {
     case 'formed':
       return needsMyAction(chain) ? 'ждём вашего решения' : 'ждём остальных участников'
     case 'active':
-      return 'передача вещей'
+      return needsMyAction(chain) ? 'отметьте получение вещи' : 'ждём остальных участников'
     case 'completed':
       return 'обмен завершён'
     case 'dissolved':

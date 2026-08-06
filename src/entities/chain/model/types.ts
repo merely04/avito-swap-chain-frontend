@@ -12,6 +12,11 @@ export interface ChainParticipant {
   /** Вещь, которую участник отдаёт следующему по кругу. */
   givesItem: { id: string; title: string }
   status: ParticipantStatus
+  /**
+   * Отметил ли участник, что получил свою вещь. Флаг у участника, а не у цепочки:
+   * иначе на стадии передачи не отличить «я подтвердил, жду остальных» от «мне надо нажать кнопку».
+   */
+  receiptConfirmed: boolean
   isMe?: boolean
 }
 
