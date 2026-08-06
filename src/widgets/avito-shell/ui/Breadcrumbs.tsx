@@ -22,7 +22,9 @@ export function Breadcrumbs({ section }: { section: Section }) {
               {crumb.label}
             </Link>
           ) : (
-            <span className={i === crumbs.length - 1 ? 'text-ink-2' : undefined}>{crumb.label}</span>
+            <span className={i === crumbs.length - 1 ? 'text-ink-2' : undefined}>
+              {crumb.label}
+            </span>
           )}
         </Fragment>
       ))}
