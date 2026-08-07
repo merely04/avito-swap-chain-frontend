@@ -1,6 +1,6 @@
-import { Card, Chip } from '@/shared/ui'
+import { Card } from '@/shared/ui'
 import type { Item } from '../model/types'
-import { ItemStatusChip } from './ItemStatusChip'
+import { ItemStatusLabel } from './ItemStatusLabel'
 
 /**
  * Желание — это поле вещи, поэтому карточка показывает обе стороны сделки:
@@ -20,17 +20,21 @@ export function WishCard({ item }: { item: Item }) {
           </span>
         </div>
 
-        <ItemStatusChip status={item.status} />
+        <ItemStatusLabel status={item.status} />
       </div>
 
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="text-[12.5px] text-ink-2">
           {item.wish.length > 1 ? 'Подойдёт любое:' : 'Хочу:'}
         </span>
+        {/* Желания — не статус, а перечисление: нейтральный тег, как чипы фильтров у Авито. */}
         {item.wish.map((variant) => (
-          <Chip key={variant.description} filled>
+          <span
+            key={variant.description}
+            className="rounded-chip bg-line-2 px-2 py-[3px] text-[12px] leading-4 font-semibold text-ink"
+          >
             {variant.description}
-          </Chip>
+          </span>
         ))}
       </div>
     </Card>

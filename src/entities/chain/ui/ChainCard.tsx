@@ -1,8 +1,7 @@
-import { cx } from '@/shared/lib'
 import { Card } from '@/shared/ui'
 import { findMe, findNeighbours, needsMyAction } from '../lib/participants'
 import type { Chain } from '../model/types'
-import { DealStatusChip } from './DealStatusChip'
+import { DealStatusLabel } from './DealStatusLabel'
 
 /** Что происходит с цепочкой — одной строкой, языком пользователя. */
 function hintFor(chain: Chain): string {
@@ -30,17 +29,14 @@ export function ChainCard({ chain }: { chain: Chain }) {
         <b className="block truncate text-[14.5px] font-bold">
           {me.givesItem.title} → {neighbours.giver.givesItem.title}
         </b>
-        <span
-          className={cx(
-            'block truncate text-[12.5px]',
-            needsMyAction(chain) ? 'font-semibold text-brand' : 'text-ink-2',
-          )}
-        >
+        {/* Строка нейтральна, даже когда ход за пользователем: цвет в карточке несёт
+            только статус справа — иначе оранжевого столько, что он перестаёт звать. */}
+        <span className="block truncate text-[12.5px] text-ink-2">
           Участников: {chain.participants.length} · {hintFor(chain)}
         </span>
       </div>
 
-      <DealStatusChip chain={chain} />
+      <DealStatusLabel chain={chain} />
     </Card>
   )
 }

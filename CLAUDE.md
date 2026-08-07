@@ -24,11 +24,15 @@ LSP в редакторе иногда ложно не резолвит зави
 - **Стили — только Tailwind-утилиты на токенах Avito.** Токены заданы в `@theme` (`src/index.css`):
   `bg-brand` (#00AAFF), `text-ink`, `border-line`, `rounded-btn`, `shadow-card` и т.д. Хардкод цветов
   не использовать — только через токены. **Тема только светлая** (`color-scheme: light`), как веб Avito.
+- **Роли цветов, как у Авито:** азур (`brand`) — только ссылки и кнопки; `attention` (#F26100, на точках
+  степпера `attention-dot`) — «ход за пользователем»; `stop` — проблема; `ink-3` — то, что уже не движется.
+  Статусы набираются текстом (`shared/ui/Status`), а не пилюлями; заливка — за баннерами и тегами.
 - **FSD, импорты только вниз:** `app → pages → widgets → features → entities → shared`. Слайсы одного
   слоя друг друга не импортят; наружу — через `index.ts` (public API). Сегменты: `ui / model / api / lib`.
   Между слоями импорт через алиас `@/` (`@/entities/chain`), внутри слайса — относительный (`../model/types`).
 - **`shared/ui` готов:** `BrandMark` (лого-точки), `Button` (primary/dark/secondary/ghost/danger, fullWidth),
-  `Chip` (neutral/accent/stop, dot, filled), `Card` (padded), `Field`+`Input`, `Banner` (info/ok/stop),
+  `Status` (neutral/attention/stop/muted — статус текстом, как в заказах Авито), `Steps` (вертикальный
+  степпер этапов: done/current/todo), `Card` (padded), `Field`+`Input`, `Banner` (info/ok/stop),
   иконки (`IconCheck`/`IconClock`/`IconClose`/`IconPlus`/`IconArrowRight`/`IconChevronLeft`/`IconBox`).
   Хелпер склейки классов — `shared/lib/cx`. Провайдеры — `app/providers.tsx` (QueryClientProvider).
 - `verbatimModuleSyntax` включён — импорт типов только через `import type`.

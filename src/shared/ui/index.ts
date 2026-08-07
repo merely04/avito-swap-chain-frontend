@@ -1,6 +1,7 @@
 export { BrandMark } from './BrandMark'
 export { Button } from './Button'
-export { Chip } from './Chip'
+export { Status, type StatusTone } from './Status'
+export { Steps, type Step } from './Steps'
 export { Card } from './Card'
 export { Field, Input } from './Field'
 export { Select } from './Select'

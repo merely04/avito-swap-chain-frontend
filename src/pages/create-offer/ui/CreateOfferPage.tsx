@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { createItem } from '@/entities/item'
 import { AddItemForm, type ItemFormValues } from '@/features/add-item'
 import { DescribeWishForm } from '@/features/describe-wish'
-import { Chip, Screen, ScreenHeader } from '@/shared/ui'
+import { Screen, ScreenHeader, Status } from '@/shared/ui'
 
 /**
  * Публикация вещи в два шага: сама вещь → что хочется взамен.
@@ -22,7 +22,7 @@ export function CreateOfferPage() {
   return (
     <Screen>
       <ScreenHeader title={step === 1 ? 'Новое объявление' : 'Что хотите взамен'} onBack={goBack}>
-        <Chip>Шаг {step} из 2</Chip>
+        <Status tone="muted">Шаг {step} из 2</Status>
       </ScreenHeader>
 
       <main className="flex flex-1 flex-col p-4">

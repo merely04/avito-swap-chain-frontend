@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from 'react-router-dom'
-import { chainKeys, DealStatusChip, getChain } from '@/entities/chain'
+import { chainKeys, DealStatusLabel, getChain } from '@/entities/chain'
 import { Notice, Screen, ScreenHeader } from '@/shared/ui'
 import { ChainBoard } from '@/widgets/chain-board'
 
@@ -31,7 +31,7 @@ export function ChainPage() {
   return (
     <Screen>
       <ScreenHeader title="Цепочка обмена" onBack={() => navigate('/exchange')}>
-        {chain && <DealStatusChip chain={chain} />}
+        {chain && <DealStatusLabel chain={chain} />}
       </ScreenHeader>
 
       <main className="flex flex-1 flex-col p-3.5 sm:p-4">

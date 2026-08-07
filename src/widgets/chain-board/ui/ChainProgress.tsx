@@ -25,7 +25,7 @@ export function ChainProgress({
         aria-label={label}
       >
         <div
-          className="h-full rounded-full bg-brand transition-[width] duration-300"
+          className="h-full rounded-full bg-ink transition-[width] duration-300"
           style={{ width: `${(value / total) * 100}%` }}
         />
       </div>

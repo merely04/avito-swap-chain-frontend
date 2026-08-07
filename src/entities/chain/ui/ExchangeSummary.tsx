@@ -1,5 +1,5 @@
 import { cx } from '@/shared/lib'
-import { Chip, IconArrowRight, IconBox } from '@/shared/ui'
+import { IconArrowRight, IconBox, Status } from '@/shared/ui'
 import type { ChainParticipant } from '../model/types'
 
 type ItemRef = ChainParticipant['givesItem']
@@ -41,11 +41,7 @@ export function ExchangeSummary({
       <b className={cx(title, 'col-start-1')}>{give.title}</b>
       <b className={cx(title, 'col-start-3')}>{receive.title}</b>
 
-      {reserved && (
-        <Chip tone="accent" dot className="col-start-1 row-start-4">
-          В цепочке
-        </Chip>
-      )}
+      {reserved && <Status className="col-start-1 row-start-4">В цепочке</Status>}
     </div>
   )
 }

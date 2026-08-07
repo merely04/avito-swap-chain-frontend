@@ -3,7 +3,7 @@ import { cx } from '@/shared/lib'
 import { Card, IconImage } from '@/shared/ui'
 import { CONDITION_LABEL } from '../model/dictionaries'
 import type { Item } from '../model/types'
-import { ItemStatusChip } from './ItemStatusChip'
+import { ItemStatusLabel } from './ItemStatusLabel'
 
 interface ItemCardProps {
   item: Item
@@ -48,7 +48,7 @@ export function ItemCard({ item, action }: ItemCardProps) {
           action ? 'col-span-2 min-[400px]:col-span-1 min-[400px]:shrink-0' : undefined,
         )}
       >
-        {action ?? <ItemStatusChip status={item.status} />}
+        {action ?? <ItemStatusLabel status={item.status} />}
       </div>
     </Card>
   )

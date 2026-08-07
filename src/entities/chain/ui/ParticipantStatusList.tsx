@@ -1,33 +1,33 @@
-import type { ComponentType } from 'react'
-import { cx } from '@/shared/lib'
-import { IconCheck, IconClock, IconClose, IconPlus } from '@/shared/ui'
+import { Status, type StatusTone } from '@/shared/ui'
 import { displayName } from '../lib/participants'
 import type { ChainParticipant, ParticipantStatus } from '../model/types'
 import { ParticipantAvatar } from './ParticipantAvatar'
 
-// Значок на аватаре — единственное цветное пятно в строке: зелёный «готов», серый «ждём»,
-// красный «отказ». Ожидание не тревога, поэтому оно нейтральное, а не оранжевое.
+// Статус участника набран текстом справа, как колонка «Статус» в заказах Авито.
+// Цветных значков на аватарах и подложки под своей строкой больше нет: они дублировали
+// подпись и делали список пёстрым. Оранжевый остаётся единственной строке, где ход за
+// пользователем, — её и надо увидеть первой.
 const STATUS_VIEW: Record<
   ParticipantStatus,
-  { badge: string; label: string; myLabel: string; Icon: ComponentType<{ size?: number }> }
+  { tone: StatusTone; label: string; myTone: StatusTone; myLabel: string }
 > = {
   confirmed: {
-    badge: 'bg-ok text-white',
+    tone: 'neutral',
     label: 'Подтверждено',
+    myTone: 'neutral',
     myLabel: 'Вы подтвердили',
-    Icon: IconCheck,
   },
   pending: {
-    badge: 'bg-line text-ink-2',
+    tone: 'muted',
     label: 'Ожидаем',
+    myTone: 'attention',
     myLabel: 'Ваш ход',
-    Icon: IconClock,
   },
   declined: {
-    badge: 'bg-stop text-white',
+    tone: 'stop',
     label: 'Отказ',
+    myTone: 'stop',
     myLabel: 'Вы отказались',
-    Icon: IconClose,
   },
 }
 
@@ -37,36 +37,19 @@ export function ParticipantStatusList({ participants }: { participants: ChainPar
     <div className="overflow-hidden rounded-card border border-line">
       {participants.map((p) => {
         const view = STATUS_VIEW[p.status]
-        const waitsForMe = p.isMe && p.status === 'pending'
-        const Icon = waitsForMe ? IconPlus : view.Icon
 
         return (
           <div
             key={p.userId}
-            className={cx(
-              'flex items-center gap-2.5 border-b border-line-2 px-3 py-2 last:border-b-0',
-              p.isMe && 'bg-brand-soft',
-            )}
+            className="flex items-center gap-2.5 border-b border-line-2 px-3 py-2 last:border-b-0"
           >
-            {/* Значок статуса сидит на аватаре: одно лицо участника вместо двух кружков в строке. */}
-            <span className="relative shrink-0">
-              <ParticipantAvatar
-                participant={p}
-                className="size-9 bg-line-2 text-[14px] font-bold text-ink-2"
-              />
-              <span
-                className={cx(
-                  'absolute -right-0.5 -bottom-0.5 grid size-4 place-items-center rounded-full ring-2',
-                  waitsForMe ? 'bg-brand text-on-brand' : view.badge,
-                  p.isMe ? 'ring-brand-soft' : 'ring-card',
-                )}
-              >
-                <Icon size={10} />
-              </span>
-            </span>
+            <ParticipantAvatar
+              participant={p}
+              className="size-9 bg-line-2 text-[14px] font-bold text-ink-2"
+            />
 
             <div className="min-w-0 flex-1">
-              <b className={cx('block truncate text-[13.5px] font-bold', p.isMe && 'text-brand')}>
+              <b className="block truncate text-[13.5px] font-bold">
                 {displayName(p)}
                 {p.rating != null && (
                   <span className="font-normal text-ink-3"> · {p.rating.toFixed(1)} ★</span>
@@ -77,9 +60,9 @@ export function ParticipantStatusList({ participants }: { participants: ChainPar
               </span>
             </div>
 
-            <span className="shrink-0 text-[12px] font-semibold text-ink-2">
+            <Status tone={p.isMe ? view.myTone : view.tone} className="shrink-0">
               {p.isMe ? view.myLabel : view.label}
-            </span>
+            </Status>
           </div>
         )
       })}
