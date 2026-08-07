@@ -69,7 +69,7 @@ export function HandoffView({ chain, me, neighbours }: ChainViewProps) {
       )}
 
       <p className="text-[12.5px] leading-relaxed text-ink-3">
-        Когда все отметят получение — цепочка закроется, обмен завершится.
+        Цепочка закроется, когда получение отметят все.
       </p>
 
       <BoardFooter>

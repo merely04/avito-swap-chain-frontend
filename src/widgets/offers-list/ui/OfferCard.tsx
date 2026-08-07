@@ -38,26 +38,17 @@ export function OfferCard({ chain, variants }: OfferCardProps) {
 
         <p className="text-[12.5px] text-ink-2">
           Участников: {total} · согласны {countConfirmed(chain)} из {total}
+          {/* Не объясняем механику заново — только помечаем, что вариант не единственный. */}
+          {!cancelled && variants > 1 && ` · ещё ${variants - 1} с этой вещью`}
         </p>
       </div>
 
       {cancelled ? (
-        <p className="text-[12.5px] leading-relaxed text-ink-2">
-          <b className="font-bold">{cancelReason(chain)}.</b> Этот вариант больше не соберётся —
-          зато ничего не потеряно: вещь свободна и участвует в подборе дальше.
+        <p className="text-[12.5px] text-ink-2">
+          <b className="font-bold">{cancelReason(chain)}.</b> Вещь участвует в подборе дальше.
         </p>
       ) : (
-        <>
-          {variants > 1 && (
-            <p className="text-[12.5px] leading-relaxed text-ink-2">
-              Ваша вещь «{me.givesItem.title}» участвует в{' '}
-              <b className="font-bold">{variants} вариантах</b> — состоится один из них, остальные
-              отменятся.
-            </p>
-          )}
-
-          <RespondToExchange chainId={chain.id} />
-        </>
+        <RespondToExchange chainId={chain.id} />
       )}
 
       <Link

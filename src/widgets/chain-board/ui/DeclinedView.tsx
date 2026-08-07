@@ -18,10 +18,7 @@ export function DeclinedView({ chain, me, neighbours }: ChainViewProps) {
         Вещь «{me.givesItem.title}» осталась у вас и участвует в других вариантах подбора.
       </Banner>
 
-      <p className="text-[12.5px] leading-relaxed text-ink-3">
-        Остальным участникам сервис ищет вам замену: если найдётся человек с подходящей вещью, обмен
-        состоится без вас. Если нет — этот вариант не состоится, и никто ничего не потеряет.
-      </p>
+      <p className="text-[12.5px] text-ink-3">Остальным участникам сервис ищет вам замену.</p>
 
       <ParticipantStatusList participants={chain.participants} neighbours={neighbours} />
 

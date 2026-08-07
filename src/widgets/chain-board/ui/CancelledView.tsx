@@ -22,14 +22,8 @@ export function CancelledView({ chain, me, neighbours }: ChainViewProps) {
       <ExchangeSummary me={me} neighbours={neighbours} />
 
       <Banner tone="ok" icon={<IconCheck size={20} />}>
-        Вещь «{me.givesItem.title}» никуда не делась — она участвует в подборе дальше.
+        Вещь «{me.givesItem.title}» участвует в подборе дальше.
       </Banner>
-
-      <p className="text-[12.5px] leading-relaxed text-ink-3">
-        Одна и та же вещь участвует сразу в нескольких вариантах, и блокируется она, только когда
-        вариант понравился всем. Один из них собрался первым — значит остальные с этой вещью
-        отменяются. Это не сбой: так вещь не простаивает в ожидании ответов.
-      </p>
 
       <BoardFooter>
         <Button fullWidth onClick={() => navigate('/exchange')}>

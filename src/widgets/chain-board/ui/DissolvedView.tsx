@@ -25,11 +25,6 @@ export function DissolvedView({ chain, me }: ChainViewProps) {
         Вещь «{me.givesItem.title}» осталась у вас и участвует в подборе.
       </Banner>
 
-      <p className="text-[12.5px] leading-relaxed text-ink-3">
-        Никто не остался без вещи: обмен не стартовал, потому что вариант подошёл не всем. Ищем для
-        вас новую цепочку.
-      </p>
-
       <BoardFooter>
         <Button fullWidth onClick={() => navigate('/')}>
           Искать новую цепочку
