@@ -1,5 +1,5 @@
 import { cx, dative, genitive } from '@/shared/lib'
-import { IconArrowRight, IconBox, Status } from '@/shared/ui'
+import { IconArrowRight, IconBox } from '@/shared/ui'
 import type { Neighbours } from '../lib/participants'
 import type { ChainParticipant } from '../model/types'
 import { ParticipantAvatar } from './ParticipantAvatar'
@@ -11,8 +11,6 @@ interface ExchangeSummaryProps {
   me: ChainParticipant
   /** Соседи: вещь получает `receiver`, а приходит она от `giver`. */
   neighbours: Neighbours
-  /** Отдаваемая вещь заморожена в цепочке — сигнал «вы её не потеряете». */
-  reserved?: boolean
   /** Обмен уже состоялся — подписи в прошедшем времени. */
   past?: boolean
 }
@@ -30,12 +28,7 @@ const title = 'row-start-3 text-center text-[13.5px] font-bold'
  * Ряды сетки держат подписи, миниатюры, названия вещей и имена сторон на одной линии,
  * а стрелку — ровно по центру ряда миниатюр.
  */
-export function ExchangeSummary({
-  me,
-  neighbours,
-  reserved = false,
-  past = false,
-}: ExchangeSummaryProps) {
+export function ExchangeSummary({ me, neighbours, past = false }: ExchangeSummaryProps) {
   const { receiver, giver } = neighbours
   const give = me.givesItem
   const receive = giver.givesItem
@@ -54,8 +47,6 @@ export function ExchangeSummary({
 
       <Party participant={receiver} caption={dative(receiver.name)} className="col-start-1" />
       <Party participant={giver} caption={`от ${genitive(giver.name)}`} className="col-start-3" />
-
-      {reserved && <Status className="col-start-1 row-start-5">В цепочке</Status>}
     </div>
   )
 }

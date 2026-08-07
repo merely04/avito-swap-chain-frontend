@@ -12,8 +12,11 @@ export const chainKeys = {
   detail: (id: string) => [...chainKeys.all, id] as const,
 }
 
-/** Ответ участника на предложение обмена. */
-export type ChainDecision = Extract<ParticipantStatus, 'confirmed' | 'declined'>
+/**
+ * Ответ участника на предложение: лайк — «этот вариант мне подходит», дизлайк — отказ
+ * от одного варианта, а не от обмена вообще. Игнор — просто отсутствие ответа.
+ */
+export type ChainDecision = 'like' | 'dislike'
 
 const [DASHA, MARK, LENA] = PERSONAS
 
@@ -39,6 +42,8 @@ const of = (
 // Флага `isMe` в данных нет: чья это цепочка — вопрос точки зрения, см. `asSeenBy`.
 // Длина цепочки — три участника: по исследованиям обмена почками переход с трёх на четыре
 // добавляет 1–5% совпадений, а алгоритм и объяснимость сделки тяжелеют заметно сильнее.
+// Подбор параллельный: у Даши сразу три предложения, и два из них держат один велосипед —
+// состоится ровно одно, второе отменится. Это штатный ход сервиса, а не крайний случай.
 let chains: Chain[] = [
   // Демонстрационная цепочка: все трое — персоны, поэтому один обмен виден тремя парами глаз.
   // Даша отдаёт велосипед Марку, Марк наушники — Лене, Лена фотоаппарат — Даше: каждый получает
@@ -62,6 +67,63 @@ let chains: Chain[] = [
         { id: '31', title: 'Плёночный фотоаппарат', photoUrl: '/mock/items/camera.jpg' },
         'pending',
       ),
+    ],
+  },
+  // Соперник c1 за тот же велосипед: Даша получает приставку — второй вариант её желания
+  // (первый закрывает c1). Двое уже лайкнули, поэтому её лайк собирает цепочку сразу,
+  // и на демо видно, как конкурирующее предложение отменяется.
+  {
+    id: 'c4',
+    status: 'formed',
+    participants: [
+      of(
+        DASHA,
+        { id: '1', title: 'Горный велосипед', photoUrl: '/mock/items/bike.jpg' },
+        'pending',
+      ),
+      {
+        userId: 'u9',
+        name: 'Костя',
+        avatarUrl: '/mock/avatars/u15.jpg',
+        rating: 4.7,
+        givesItem: { id: '91', title: 'Смартфон Redmi Note 12', photoUrl: '/mock/items/phone.jpg' },
+        status: 'confirmed',
+        receiptConfirmed: false,
+      },
+      {
+        userId: 'u10',
+        name: 'Аня',
+        avatarUrl: '/mock/avatars/u5.jpg',
+        rating: 4.9,
+        givesItem: {
+          id: '92',
+          title: 'Игровая приставка PlayStation 4',
+          photoUrl: '/mock/items/console.jpg',
+        },
+        status: 'confirmed',
+        receiptConfirmed: false,
+      },
+    ],
+  },
+  // Прямой обмен на двоих — вырожденная цепочка, но такая же законная. Держит другую вещь
+  // Даши (гантели), поэтому от исхода велосипедных вариантов не зависит.
+  {
+    id: 'c5',
+    status: 'formed',
+    participants: [
+      of(DASHA, { id: '2', title: 'Гантели 20 кг' }, 'pending'),
+      {
+        userId: 'u11',
+        name: 'Петя',
+        rating: 4.5,
+        givesItem: {
+          id: '93',
+          title: 'Умные часы Xiaomi Watch S3',
+          photoUrl: '/mock/items/watch.jpg',
+        },
+        status: 'pending',
+        receiptConfirmed: false,
+      },
     ],
   },
   // Идущая передача: Игорь свою вещь уже получил, Соня — ещё нет. Значит после отметки
@@ -165,32 +227,54 @@ export async function getChain(id: string): Promise<Chain> {
   return asSeenBy(find(id), currentPersonaId())
 }
 
-/** Подтвердить или отклонить участие. Отказ любого участника распускает цепочку. */
+/**
+ * Цепочка собралась — её вещи заблокированы, и конкурирующие предложения с теми же вещами
+ * собрать уже нельзя. Отменяем их сразу, запоминая вещь-причину: без неё человеку не объяснить,
+ * почему предложение, которое он только что видел, больше не работает.
+ */
+function cancelRivals(formedId: string) {
+  const taken = new Set(find(formedId).participants.map((p) => p.givesItem.id))
+
+  chains = chains.map((chain) => {
+    if (chain.id === formedId || chain.status !== 'formed') return chain
+
+    const lost = chain.participants.find((p) => taken.has(p.givesItem.id))
+    if (!lost) return chain
+
+    const cancelled: Chain = { ...chain, status: 'cancelled', cancelledItemId: lost.givesItem.id }
+    return cancelled
+  })
+}
+
+/**
+ * Ответ на предложение. Лайк — «вариант подходит»: обмен стартует, только когда лайкнули все,
+ * до этого вещь остаётся у владельца и участвует в других вариантах. Дизлайк снимает с варианта
+ * одного человека, а не распускает цепочку: остальным сервис ищет замену.
+ */
 export async function respondToChain(id: string, decision: ChainDecision): Promise<void> {
   await delay(400)
   find(id)
   const personaId = currentPersonaId()
 
-  if (decision === 'declined') {
-    replace(id, (chain) => ({
-      ...withPersonaStatus(chain, personaId, 'declined'),
-      status: 'dissolved',
-    }))
+  if (decision === 'dislike') {
+    replace(id, (chain) => withPersonaStatus(chain, personaId, 'declined'))
     return
   }
 
   replace(id, (chain) => withPersonaStatus(chain, personaId, 'confirmed'))
 
-  // Демо-имитация ответа остальных участников: на бэке это придёт обычным refetch.
+  // Демо-имитация лайков остальных участников: на бэке это придёт обычным refetch.
   setTimeout(() => {
-    // За это время пользователь мог выйти из цепочки — распавшуюся не воскрешаем.
-    if (find(id).status !== 'formed') return
+    const chain = find(id)
+    // За это время предложение могло отмениться, а пользователь — выйти из цепочки.
+    if (chain.status !== 'formed' || chain.participants.some((p) => p.status === 'declined')) return
 
-    replace(id, (chain) => ({
-      ...chain,
+    replace(id, (current) => ({
+      ...current,
       status: 'active',
-      participants: chain.participants.map((p) => ({ ...p, status: 'confirmed' })),
+      participants: current.participants.map((p) => ({ ...p, status: 'confirmed' })),
     }))
+    cancelRivals(id)
   }, 2500)
 }
 

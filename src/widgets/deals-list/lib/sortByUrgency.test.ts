@@ -49,14 +49,21 @@ describe('sortByUrgency', () => {
     expect(ids(sortByUrgency(input))).toEqual(['urgent', 'active', 'completed'])
   })
 
-  it('порядок статусов: formed → active → dissolved → completed', () => {
+  it('порядок статусов: formed → active → dissolved → cancelled → completed', () => {
     const input = [
       chain('completed', 'completed', 'confirmed'),
+      chain('cancelled', 'cancelled', 'pending'),
       chain('dissolved', 'dissolved', 'declined'),
       chain('active', 'active', 'confirmed', true),
       chain('formed', 'formed', 'confirmed'),
     ]
-    expect(ids(sortByUrgency(input))).toEqual(['formed', 'active', 'dissolved', 'completed'])
+    expect(ids(sortByUrgency(input))).toEqual([
+      'formed',
+      'active',
+      'dissolved',
+      'cancelled',
+      'completed',
+    ])
   })
 
   it('срочная цепочка обгоняет даже formed, где я уже подтвердил', () => {

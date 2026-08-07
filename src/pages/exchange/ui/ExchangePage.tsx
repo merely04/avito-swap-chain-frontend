@@ -2,6 +2,7 @@ import { useSearchParams } from 'react-router-dom'
 import { cx } from '@/shared/lib'
 import { Screen } from '@/shared/ui'
 import { DealsList, PendingDealBanner } from '@/widgets/deals-list'
+import { OffersList } from '@/widgets/offers-list'
 import { WishesList } from '@/widgets/wishes-list'
 
 type Tab = 'deals' | 'wishes'
@@ -28,6 +29,10 @@ export function ExchangePage() {
 
         {/* Баннер над вкладками: зовёт в цепочку независимо от того, что сейчас открыто. */}
         <PendingDealBanner />
+
+        {/* Подобранные варианты стоят над вкладками и первыми: ответ по ним — то, ради чего
+            человек сюда пришёл, и вариантов у него сразу несколько. */}
+        <OffersList />
 
         <nav aria-label="Разделы обмена" className="flex gap-6 border-b border-line-2">
           {TABS.map((t) => (

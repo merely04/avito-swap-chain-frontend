@@ -8,15 +8,17 @@ import { ParticipantAvatar } from './ParticipantAvatar'
 // Цветных значков на аватарах и подложки под своей строкой больше нет: они дублировали
 // подпись и делали список пёстрым. Оранжевый остаётся единственной строке, где ход за
 // пользователем, — её и надо увидеть первой.
+// Подписи — про согласие с вариантом, а не про заключённую сделку: лайк означает
+// «мне подходит», и обмен стартует, только когда так ответят все.
 const STATUS_VIEW: Record<
   ParticipantStatus,
   { tone: StatusTone; label: string; myTone: StatusTone; myLabel: string }
 > = {
   confirmed: {
     tone: 'neutral',
-    label: 'Подтверждено',
+    label: 'Подходит',
     myTone: 'neutral',
-    myLabel: 'Вы подтвердили',
+    myLabel: 'Вам подходит',
   },
   pending: {
     tone: 'muted',
@@ -26,7 +28,7 @@ const STATUS_VIEW: Record<
   },
   declined: {
     tone: 'stop',
-    label: 'Отказ',
+    label: 'Не подошло',
     myTone: 'stop',
     myLabel: 'Вы отказались',
   },

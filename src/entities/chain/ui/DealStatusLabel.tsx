@@ -9,6 +9,8 @@ const STATUS_VIEW = {
   active: { tone: 'neutral', label: 'Идёт передача' },
   completed: { tone: 'muted', label: 'Обмен завершён' },
   dissolved: { tone: 'stop', label: 'Распалась' },
+  // Отмена — не провал: вещь просто ушла в другой обмен, поэтому серый, а не красный.
+  cancelled: { tone: 'muted', label: 'Отменилось' },
 } as const
 
 /** Статус сделки человеческим языком: домен знает смысл, `shared/ui/Status` — вид. */

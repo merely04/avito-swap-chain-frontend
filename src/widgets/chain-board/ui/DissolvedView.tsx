@@ -22,12 +22,12 @@ export function DissolvedView({ chain, me }: ChainViewProps) {
       </Banner>
 
       <Banner tone="ok" icon={<IconCheck size={20} />}>
-        Вещь «{me.givesItem.title}» снова свободна и участвует в подборе.
+        Вещь «{me.givesItem.title}» осталась у вас и участвует в подборе.
       </Banner>
 
       <p className="text-[12.5px] leading-relaxed text-ink-3">
-        Никто не остался без вещи: обмен не стартовал, потому что подтвердили не все. Ищем для вас
-        новую цепочку.
+        Никто не остался без вещи: обмен не стартовал, потому что вариант подошёл не всем. Ищем для
+        вас новую цепочку.
       </p>
 
       <BoardFooter>

@@ -2,7 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { chainKeys, respondToChain, type ChainDecision } from '@/entities/chain'
 import { Button } from '@/shared/ui'
 
-/** Ответ на предложение обмена: подтвердить участие или отклонить. */
+/**
+ * Ответ на один вариант обмена: «нравится» — согласие на него, а не заключённая сделка;
+ * «не подходит» — отказ от этого варианта, остальные предложения человека остаются.
+ * Кнопки стоят в строку: ответить надо быстро и в списке, и на экране цепочки.
+ */
 export function RespondToExchange({ chainId }: { chainId: string }) {
   const queryClient = useQueryClient()
   const { mutate, isPending } = useMutation({
@@ -11,12 +15,17 @@ export function RespondToExchange({ chainId }: { chainId: string }) {
   })
 
   return (
-    <div className="flex flex-col gap-2.5">
-      <Button fullWidth disabled={isPending} onClick={() => mutate('confirmed')}>
-        Подтвердить участие
+    <div className="flex gap-2.5">
+      <Button className="flex-1" disabled={isPending} onClick={() => mutate('like')}>
+        Нравится
       </Button>
-      <Button variant="secondary" fullWidth disabled={isPending} onClick={() => mutate('declined')}>
-        Отклонить
+      <Button
+        variant="secondary"
+        className="flex-1"
+        disabled={isPending}
+        onClick={() => mutate('dislike')}
+      >
+        Не подходит
       </Button>
     </div>
   )

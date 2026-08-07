@@ -1,16 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { chainKeys, getMyChains, needsMyAction } from '@/entities/chain'
-import { Banner, IconPlus } from '@/shared/ui'
+import { Banner, IconClock } from '@/shared/ui'
 
 /**
- * Зовёт в цепочку, которая ждёт решения пользователя. Если таких нет — не показывается,
- * чтобы дашборд не звал в обмен, по которому ход уже сделан.
+ * Зовёт в запущенный обмен, где ход за пользователем: он ещё не отметил, что получил вещь.
+ * Предложения сюда не попадают — у них свой блок с ответом прямо в списке, и баннер над ним
+ * повторял бы то же самое.
  */
 export function PendingDealBanner() {
   const { data } = useQuery({ queryKey: chainKeys.my(), queryFn: getMyChains })
 
-  const pending = data?.find(needsMyAction)
+  const pending = data?.find((chain) => chain.status === 'active' && needsMyAction(chain))
   if (!pending) return null
 
   return (
@@ -18,9 +19,8 @@ export function PendingDealBanner() {
       to={`/exchange/${pending.id}`}
       className="rounded-2xl outline-offset-2 focus-visible:outline-2 focus-visible:outline-brand"
     >
-      <Banner tone="info" icon={<IconPlus size={20} />}>
-        <b className="font-bold">Новое предложение обмена</b> — цепочка из{' '}
-        {pending.participants.length} участников
+      <Banner tone="info" icon={<IconClock size={20} />}>
+        <b className="font-bold">Обмен идёт</b> — отметьте, что получили вещь
       </Banner>
     </Link>
   )

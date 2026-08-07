@@ -4,7 +4,8 @@ const STATUS_WEIGHT: Record<Chain['status'], number> = {
   formed: 1,
   active: 2,
   dissolved: 3,
-  completed: 4,
+  cancelled: 4,
+  completed: 5,
 }
 
 const rank = (chain: Chain) => (needsMyAction(chain) ? 0 : STATUS_WEIGHT[chain.status])

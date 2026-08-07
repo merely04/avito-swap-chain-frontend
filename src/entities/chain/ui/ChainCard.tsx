@@ -7,13 +7,19 @@ import { DealStatusLabel } from './DealStatusLabel'
 function hintFor(chain: Chain): string {
   switch (chain.status) {
     case 'formed':
-      return needsMyAction(chain) ? 'ждём вашего решения' : 'ждём остальных участников'
+      if (needsMyAction(chain)) return 'ждём вашего решения'
+      // Отказавшийся ничего не ждёт: цепочка живёт без него, пока ему ищут замену.
+      return findMe(chain)?.status === 'declined'
+        ? 'вы отказались от варианта'
+        : 'ждём остальных участников'
     case 'active':
       return needsMyAction(chain) ? 'отметьте получение вещи' : 'ждём остальных участников'
     case 'completed':
       return 'обмен завершён'
     case 'dissolved':
       return 'цепочка распалась'
+    case 'cancelled':
+      return 'вещь ушла в другой обмен'
   }
 }
 

@@ -64,6 +64,8 @@ describe('selectView — терминальные статусы перекры�
     { status: 'active', view: 'handoff' },
     { status: 'completed', view: 'completed' },
     { status: 'dissolved', view: 'dissolved' },
+    // Вещь ушла в другую цепочку: отвечать на предложение уже поздно, что бы я ни ответил раньше.
+    { status: 'cancelled', view: 'cancelled' },
   ]
 
   for (const { status, view } of cases) {
@@ -78,14 +80,14 @@ describe('selectView — терминальные статусы перекры�
 })
 
 describe('selectView — свойства машины состояний', () => {
-  it('покрыты все четыре статуса цепочки, ни один не проваливается в undefined', () => {
-    const statuses: ChainStatus[] = ['formed', 'active', 'completed', 'dissolved']
+  it('покрыты все статусы цепочки, ни один не проваливается в undefined', () => {
+    const statuses: ChainStatus[] = ['formed', 'active', 'completed', 'dissolved', 'cancelled']
     const views = statuses.map((status) => selectView(chainWithMe(status, 'confirmed')))
-    expect(views).toEqual(['waiting', 'handoff', 'completed', 'dissolved'])
+    expect(views).toEqual(['waiting', 'handoff', 'completed', 'dissolved', 'cancelled'])
   })
 
   it('статус участника влияет на вид только при formed', () => {
-    const terminal: ChainStatus[] = ['active', 'completed', 'dissolved']
+    const terminal: ChainStatus[] = ['active', 'completed', 'dissolved', 'cancelled']
     for (const status of terminal) {
       const withPending = selectView(chainWithMe(status, 'pending'))
       const withConfirmed = selectView(chainWithMe(status, 'confirmed'))

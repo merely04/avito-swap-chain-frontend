@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { ChainCard, chainKeys, getMyChains } from '@/entities/chain'
+import { ChainCard, chainKeys, getMyChains, isOpenOffer } from '@/entities/chain'
 import { Notice } from '@/shared/ui'
 import { sortByUrgency } from '../lib/sortByUrgency'
 
@@ -12,13 +12,17 @@ export function DealsList() {
 
   if (isPending) return <Notice>Загрузка…</Notice>
   if (isError) return <Notice tone="error">Не удалось загрузить обмены</Notice>
-  if (data.length === 0) {
+
+  // Предложения, по которым человек ещё не ответил, и отменившиеся варианты живут в блоке
+  // «Варианты обмена» — здесь только то, во что человек уже вошёл, и история.
+  const deals = data.filter((chain) => !isOpenOffer(chain) && chain.status !== 'cancelled')
+  if (deals.length === 0) {
     return <Notice>Обменов пока нет. Добавьте вещь — сервис подберёт для неё цепочку.</Notice>
   }
 
   return (
     <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
-      {sortByUrgency(data).map((chain) => (
+      {sortByUrgency(deals).map((chain) => (
         <Link
           key={chain.id}
           to={`/exchange/${chain.id}`}
