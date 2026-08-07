@@ -9,10 +9,9 @@ export function OfferView({ chain, me, neighbours }: ChainViewProps) {
     <>
       <ExchangeSummary me={me} neighbours={neighbours} />
 
+      {/* Лента — схема круга, список — кто уже ответил. Вещи участников называет только
+          список: раньше они стояли в обоих блоках подряд, и экран повторял сам себя. */}
       <ChainRibbon participants={chain.participants} neighbours={neighbours} />
-      <p className="-mt-1 text-center text-[12px] text-ink-3">
-        Каждый отдаёт вещь соседу по кругу — без денег
-      </p>
 
       <ParticipantStatusList participants={chain.participants} neighbours={neighbours} />
 

@@ -16,9 +16,10 @@ export function CompletedView({ me, neighbours }: ChainViewProps) {
 
       <ExchangeSummary me={me} neighbours={neighbours} past />
 
+      {/* «Цепочка закрыта» уже сказано баннером и статусом в шапке — здесь только то,
+          чего человек ещё не знает: куда делась полученная вещь. */}
       <p className="text-[12.5px] leading-relaxed text-ink-3">
-        Цепочка закрыта. Вещь «{neighbours.giver.givesItem.title}» теперь ваша — она появится в
-        списке ваших вещей.
+        Полученная вещь появится в списке ваших объявлений.
       </p>
 
       <BoardFooter>

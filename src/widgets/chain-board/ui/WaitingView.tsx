@@ -1,15 +1,11 @@
-import { countConfirmed, ExchangeSummary, ParticipantStatusList } from '@/entities/chain'
+import { ExchangeSummary, ParticipantStatusList } from '@/entities/chain'
 import { LeaveChain } from '@/features/leave-chain'
 import { Banner, IconCheck } from '@/shared/ui'
 import type { ChainViewProps } from '../model/types'
 import { BoardFooter } from './BoardFooter'
-import { ChainProgress } from './ChainProgress'
 
 /** FORMED + я CONFIRMED: вариант мне подошёл — ждём ответа остальных участников. */
 export function WaitingView({ chain, me, neighbours }: ChainViewProps) {
-  const confirmed = countConfirmed(chain)
-  const total = chain.participants.length
-
   return (
     <>
       <Banner tone="ok" icon={<IconCheck size={20} />}>
@@ -18,14 +14,13 @@ export function WaitingView({ chain, me, neighbours }: ChainViewProps) {
 
       <ExchangeSummary me={me} neighbours={neighbours} />
 
-      <ChainProgress label="Вариант подошёл" value={confirmed} total={total} />
-
+      {/* Полосы «подошёл N из M» здесь нет: счёт стоит в шапке экрана, а кто именно ответил —
+          видно построчно в списке. Полоса была третьим показом одного и того же числа. */}
       <ParticipantStatusList participants={chain.participants} neighbours={neighbours} />
 
       <p className="text-[12.5px] leading-relaxed text-ink-3">
-        Вещь пока не заблокирована: она участвует и в других подобранных вариантах. Заблокируется
-        она в тот момент, когда этот вариант понравится всем, — тогда остальные варианты с ней
-        отменятся.
+        Вещь пока не заблокирована — она участвует и в других вариантах. Заблокируется, когда этот
+        вариант подойдёт всем: остальные варианты с ней тогда отменятся.
       </p>
 
       <BoardFooter>
