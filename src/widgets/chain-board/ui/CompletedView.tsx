@@ -24,7 +24,7 @@ export function CompletedView({ me, neighbours }: ChainViewProps) {
 
       <BoardFooter>
         <Button fullWidth onClick={() => navigate('/')}>
-          К моим вещам
+          К моим объявлениям
         </Button>
       </BoardFooter>
     </>
