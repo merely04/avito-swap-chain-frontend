@@ -6,6 +6,7 @@ import { WaitingView } from './WaitingView'
 import { HandoffView } from './HandoffView'
 import { CompletedView } from './CompletedView'
 import { DissolvedView } from './DissolvedView'
+import { DeclinedView } from './DeclinedView'
 
 /** Доска цепочки: по состоянию сделки выбирает, что именно показать пользователю. */
 export function ChainBoard({ chain }: { chain: Chain }) {
@@ -35,5 +36,7 @@ function renderView(props: ChainViewProps) {
       return <CompletedView {...props} />
     case 'dissolved':
       return <DissolvedView {...props} />
+    case 'declined':
+      return <DeclinedView {...props} />
   }
 }

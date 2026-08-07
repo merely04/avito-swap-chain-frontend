@@ -1,6 +1,6 @@
 import { findMe, type Chain } from '@/entities/chain'
 
-export type ChainView = 'offer' | 'waiting' | 'handoff' | 'completed' | 'dissolved'
+export type ChainView = 'offer' | 'waiting' | 'handoff' | 'completed' | 'dissolved' | 'declined'
 
 /**
  * Машина состояний сделки → под-вид экрана: `chain.status × статус моего участника`.
@@ -15,6 +15,14 @@ export function selectView(chain: Chain): ChainView {
     case 'active':
       return 'handoff'
     case 'formed':
-      return findMe(chain)?.status === 'confirmed' ? 'waiting' : 'offer'
+      switch (findMe(chain)?.status) {
+        case 'confirmed':
+          return 'waiting'
+        case 'declined':
+          return 'declined'
+        default:
+          // 'pending' — ход за мной. undefined (меня нет в цепочке) отсекает ChainBoard.
+          return 'offer'
+      }
   }
 }

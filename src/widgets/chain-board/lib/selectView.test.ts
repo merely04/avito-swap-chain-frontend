@@ -41,10 +41,10 @@ describe('selectView — цепочка formed, вид зависит от мо�
     expect(selectView(chainWithMe('formed', 'confirmed'))).toBe('waiting')
   })
 
-  // Нелогичная комбинация: отказ обычно сразу переводит цепочку в dissolved.
-  // Пока это состояние не отсеяно на уровне данных, экран покажет предложение заново.
-  it('я отказался, но цепочка ещё formed → снова предложение', () => {
-    expect(selectView(chainWithMe('formed', 'declined'))).toBe('offer')
+  // Я вышел, но цепочка жива: бэкенд ищет мне замену (Миша ↔ Витя ↔ X).
+  // Показывать отказавшемуся предложение с кнопкой «подтвердить» нельзя — у состояния свой вид.
+  it('я отказался, но цепочка ещё formed → вид «вы вышли»', () => {
+    expect(selectView(chainWithMe('formed', 'declined'))).toBe('declined')
   })
 
   // Сам selectView этот случай не различает — «не участвую» отсекается выше, в ChainBoard.
