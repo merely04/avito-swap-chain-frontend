@@ -16,11 +16,11 @@ export function WaitingView({ chain, me, neighbours }: ChainViewProps) {
         <b className="font-bold">Вы подтвердили участие.</b> Ждём остальных.
       </Banner>
 
-      <ExchangeSummary give={me.givesItem} receive={neighbours.giver.givesItem} reserved />
+      <ExchangeSummary me={me} neighbours={neighbours} reserved />
 
       <ChainProgress label="Согласовано" value={confirmed} total={total} />
 
-      <ParticipantStatusList participants={chain.participants} />
+      <ParticipantStatusList participants={chain.participants} neighbours={neighbours} />
 
       <BoardFooter>
         <p className="text-center text-[12.5px] text-ink-2">

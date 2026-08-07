@@ -8,6 +8,7 @@ import {
   findDecliner,
   findMe,
   findNeighbours,
+  isNeighbour,
   needsMyAction,
 } from './participants'
 
@@ -319,5 +320,42 @@ describe('findNeighbours', () => {
       receiver: c.participants[2],
       giver: c.participants[0],
     })
+  })
+})
+
+describe('isNeighbour', () => {
+  const c = chain([
+    participant('me', 'pending', true),
+    participant('u2', 'confirmed'),
+    participant('u3', 'confirmed'),
+    participant('u4', 'confirmed'),
+  ])
+  const neighbours = findNeighbours(c)!
+
+  it('тот, кому отдаю вещь, — сосед', () => {
+    expect(isNeighbour(c.participants[1], neighbours)).toBe(true)
+  })
+
+  it('тот, от кого получаю вещь, — сосед', () => {
+    expect(isNeighbour(c.participants[3], neighbours)).toBe(true)
+  })
+
+  it('участник на другой стороне круга соседом не считается', () => {
+    expect(isNeighbour(c.participants[2], neighbours)).toBe(false)
+  })
+
+  it('сам пользователь себе не сосед', () => {
+    expect(isNeighbour(c.participants[0], neighbours)).toBe(false)
+  })
+
+  it('в цепочке из троих соседями оказываются оба участника', () => {
+    const three = chain([
+      participant('me', 'pending', true),
+      participant('u2', 'confirmed'),
+      participant('u3', 'confirmed'),
+    ])
+    const both = findNeighbours(three)!
+
+    expect(three.participants.filter((p) => isNeighbour(p, both))).toHaveLength(2)
   })
 })

@@ -14,7 +14,7 @@ export function CompletedView({ me, neighbours }: ChainViewProps) {
         <b className="font-bold">Обмен завершён.</b> Все вещи нашли новых владельцев.
       </Banner>
 
-      <ExchangeSummary give={me.givesItem} receive={neighbours.giver.givesItem} past />
+      <ExchangeSummary me={me} neighbours={neighbours} past />
 
       <p className="text-[12.5px] leading-relaxed text-ink-3">
         Цепочка закрыта. Вещь «{neighbours.giver.givesItem.title}» теперь ваша — она появится в

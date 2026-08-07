@@ -5,7 +5,7 @@ import type { ChainViewProps } from '../model/types'
 import { BoardFooter } from './BoardFooter'
 
 /** FORMED + я DECLINED: я вышел, но цепочка ещё жива — участники ищут замену. */
-export function DeclinedView({ chain, me }: ChainViewProps) {
+export function DeclinedView({ chain, me, neighbours }: ChainViewProps) {
   const navigate = useNavigate()
 
   return (
@@ -24,7 +24,7 @@ export function DeclinedView({ chain, me }: ChainViewProps) {
         Если нет — цепочка распадётся, вещи разблокируются, никто ничего не потеряет.
       </p>
 
-      <ParticipantStatusList participants={chain.participants} />
+      <ParticipantStatusList participants={chain.participants} neighbours={neighbours} />
 
       <BoardFooter>
         <Button fullWidth onClick={() => navigate('/')}>

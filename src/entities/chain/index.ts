@@ -12,6 +12,7 @@ export {
   findMe,
   displayName,
   findNeighbours,
+  isNeighbour,
   findDecliner,
   needsMyAction,
   countConfirmed,
@@ -20,6 +21,6 @@ export {
 } from './lib/participants'
 export { ChainCard } from './ui/ChainCard'
 export { ExchangeSummary } from './ui/ExchangeSummary'
-export { ChainRing } from './ui/ChainRing'
+export { ChainRibbon } from './ui/ChainRibbon'
 export { ParticipantStatusList } from './ui/ParticipantStatusList'
 export { DealStatusLabel } from './ui/DealStatusLabel'

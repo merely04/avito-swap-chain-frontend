@@ -1,4 +1,4 @@
-import { ChainRing, ExchangeSummary, ParticipantStatusList } from '@/entities/chain'
+import { ChainRibbon, ExchangeSummary, ParticipantStatusList } from '@/entities/chain'
 import { RespondToExchange } from '@/features/respond-to-exchange'
 import type { ChainViewProps } from '../model/types'
 import { BoardFooter } from './BoardFooter'
@@ -7,14 +7,14 @@ import { BoardFooter } from './BoardFooter'
 export function OfferView({ chain, me, neighbours }: ChainViewProps) {
   return (
     <>
-      <ExchangeSummary give={me.givesItem} receive={neighbours.giver.givesItem} reserved />
+      <ExchangeSummary me={me} neighbours={neighbours} reserved />
 
-      <ChainRing participants={chain.participants} />
+      <ChainRibbon participants={chain.participants} neighbours={neighbours} />
       <p className="-mt-1 text-center text-[12px] text-ink-3">
         Каждый отдаёт вещь соседу по кругу — без денег
       </p>
 
-      <ParticipantStatusList participants={chain.participants} />
+      <ParticipantStatusList participants={chain.participants} neighbours={neighbours} />
 
       <BoardFooter>
         <p className="text-center text-[12.5px] text-ink-2">

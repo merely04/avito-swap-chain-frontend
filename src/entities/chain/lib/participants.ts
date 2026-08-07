@@ -57,6 +57,16 @@ export interface Neighbours {
   giver: ChainParticipant
 }
 
+/**
+ * Сосед по кругу — реальный контрагент: ему пользователь отдаёт вещь или от него получает,
+ * с ним договаривается о встрече. Остальные объясняют механику («круг замкнут»), но
+ * подробности о них пользователю не нужны — отсюда разная громкость в интерфейсе.
+ */
+export const isNeighbour = (
+  participant: ChainParticipant,
+  { receiver, giver }: Neighbours,
+): boolean => participant.userId === receiver.userId || participant.userId === giver.userId
+
 /** Соседи по кругу обмена. `undefined`, если текущего пользователя нет в цепочке. */
 export function findNeighbours(chain: Chain): Neighbours | undefined {
   const index = chain.participants.findIndex((p) => p.isMe)

@@ -20,7 +20,7 @@ const itemClass =
  * «Обмен» с бейджем — точка входа в сервис: не витрина, а раздел,
  * куда зовут ровно тогда, когда ход за пользователем.
  */
-export function CabinetNav({ section }: { section: Section }) {
+export function CabinetNav({ section, className }: { section: Section; className?: string }) {
   const { data } = useQuery({ queryKey: chainKeys.my(), queryFn: getMyChains })
   const waiting = data?.filter(needsMyAction).length ?? 0
 
@@ -33,7 +33,10 @@ export function CabinetNav({ section }: { section: Section }) {
   return (
     <nav
       aria-label="Личный кабинет"
-      className="no-scrollbar flex gap-1 overflow-x-auto px-3 py-1.5 max-lg:border-b max-lg:border-line-2 sm:py-2 lg:sticky lg:top-6 lg:w-56 lg:shrink-0 lg:flex-col lg:gap-0.5 lg:self-start lg:overflow-visible lg:rounded-card lg:border lg:border-line lg:bg-card lg:p-2 lg:shadow-card"
+      className={cx(
+        'no-scrollbar flex gap-1 overflow-x-auto px-3 py-1.5 max-lg:border-b max-lg:border-line-2 sm:py-2 lg:sticky lg:top-6 lg:w-56 lg:shrink-0 lg:flex-col lg:gap-0.5 lg:self-start lg:overflow-visible lg:rounded-card lg:border lg:border-line lg:bg-card lg:p-2 lg:shadow-card',
+        className,
+      )}
     >
       <Link
         to={ITEMS_URL}

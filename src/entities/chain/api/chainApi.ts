@@ -37,7 +37,12 @@ const of = (
 // бэкенд. Меняется на реальные HTTP-вызовы без правок компонентов.
 // Порядок участников = обход цикла: participants[i] отдаёт вещь participants[i + 1].
 // Флага `isMe` в данных нет: чья это цепочка — вопрос точки зрения, см. `asSeenBy`.
+// Длина цепочки — три участника: по исследованиям обмена почками переход с трёх на четыре
+// добавляет 1–5% совпадений, а алгоритм и объяснимость сделки тяжелеют заметно сильнее.
 let chains: Chain[] = [
+  // Демонстрационная цепочка: все трое — персоны, поэтому один обмен виден тремя парами глаз.
+  // Даша отдаёт велосипед Марку, Марк наушники — Лене, Лена фотоаппарат — Даше: каждый получает
+  // ровно то, что указал в желании (см. `wish` этих вещей в `itemsApi`).
   {
     id: 'c1',
     status: 'formed',
@@ -57,15 +62,6 @@ let chains: Chain[] = [
         { id: '31', title: 'Плёночный фотоаппарат', photoUrl: '/mock/items/camera.jpg' },
         'pending',
       ),
-      // Единственный участник без `avatarUrl` — намеренно: на нём видно фолбэк на инициал.
-      {
-        userId: 'u4',
-        name: 'Аня',
-        rating: 5.0,
-        givesItem: { id: '41', title: 'Смартфон', photoUrl: '/mock/items/phone.jpg' },
-        status: 'confirmed',
-        receiptConfirmed: false,
-      },
     ],
   },
   // Идущая передача: Игорь свою вещь уже получил, Соня — ещё нет. Значит после отметки
@@ -84,10 +80,10 @@ let chains: Chain[] = [
         status: 'confirmed',
         receiptConfirmed: true,
       },
+      // Единственный участник без `avatarUrl` — намеренно: на нём видно фолбэк на инициал.
       {
         userId: 'u6',
         name: 'Соня',
-        avatarUrl: '/mock/avatars/u5.jpg',
         rating: 4.6,
         givesItem: { id: '61', title: 'Электросамокат', photoUrl: '/mock/items/scooter.jpg' },
         status: 'confirmed',
@@ -120,15 +116,6 @@ let chains: Chain[] = [
         avatarUrl: '/mock/avatars/u26.jpg',
         rating: 5.0,
         givesItem: { id: '81', title: 'Плед', photoUrl: '/mock/items/blanket.jpg' },
-        status: 'confirmed',
-        receiptConfirmed: true,
-      },
-      {
-        userId: 'u9',
-        name: 'Рома',
-        avatarUrl: '/mock/avatars/u15.jpg',
-        rating: 4.5,
-        givesItem: { id: '91', title: 'Кресло-мешок', photoUrl: '/mock/items/beanbag.jpg' },
         status: 'confirmed',
         receiptConfirmed: true,
       },

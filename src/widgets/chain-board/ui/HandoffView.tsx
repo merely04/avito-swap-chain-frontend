@@ -56,7 +56,7 @@ export function HandoffView({ chain, me, neighbours }: ChainViewProps) {
         )}
       </Banner>
 
-      <ExchangeSummary give={me.givesItem} receive={receive} />
+      <ExchangeSummary me={me} neighbours={neighbours} />
 
       {done ? (
         <ChainProgress

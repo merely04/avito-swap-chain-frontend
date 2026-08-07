@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
 import { Link } from 'react-router-dom'
+import { cx } from '@/shared/lib'
 import { getBreadcrumbs } from '../lib/navigation'
 
 /**
@@ -7,14 +8,17 @@ import { getBreadcrumbs } from '../lib/navigation'
  * Есть только на вложенных экранах, а они все узкие, поэтому ширина крошек
  * совпадает с `Screen width="narrow"` — иначе на десктопе строка уезжала бы влево.
  */
-export function Breadcrumbs({ pathname }: { pathname: string }) {
+export function Breadcrumbs({ pathname, className }: { pathname: string; className?: string }) {
   const crumbs = getBreadcrumbs(pathname)
   if (crumbs.length === 0) return null
 
   return (
     <nav
       aria-label="Хлебные крошки"
-      className="mx-auto flex w-full max-w-2xl items-center gap-1.5 px-4 pt-2 text-[12px] text-ink-3 sm:pt-2.5 lg:px-0 lg:pt-0 lg:pb-2.5"
+      className={cx(
+        'mx-auto flex w-full max-w-2xl items-center gap-1.5 px-4 pt-2 text-[12px] text-ink-3 sm:pt-2.5 lg:px-0 lg:pt-0 lg:pb-2.5',
+        className,
+      )}
     >
       {crumbs.map((crumb, i) => (
         <Fragment key={crumb.label}>

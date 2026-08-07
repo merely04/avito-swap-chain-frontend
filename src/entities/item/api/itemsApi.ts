@@ -44,7 +44,7 @@ let itemsByOwner: Record<string, Item[]> = {
       status: 'reserved',
       wish: [
         { category: 'Электроника', description: 'Игровая приставка PlayStation' },
-        { category: 'Электроника', description: 'Смартфон не старше трёх лет' },
+        { category: 'Электроника', description: 'Плёночный фотоаппарат' },
       ],
     },
     {
