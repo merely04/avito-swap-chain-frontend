@@ -25,3 +25,8 @@ dist-ssr
 
 # скриншоты экранов для презентации (не часть сборки)
 screens/
+
+# сборка демо-ролика: исходники в docs/demo-source лежат в репозитории, артефакты — нет
+docs/demo-source/node_modules
+docs/demo-source/out
+docs/demo-source/public
