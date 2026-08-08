@@ -87,7 +87,8 @@ docker run -p 8080:80 avito-chain-front
 Продуктовые решения и контракт с бэкендом — в [`docs/`](docs):
 [product-flow.md](docs/product-flow.md) (пользовательский путь и почему он такой),
 [api-contract.md](docs/api-contract.md) (объекты, эндпоинты, принятые решения),
-[competitors.md](docs/competitors.md) (кто ещё решает эту задачу и чем мы отличаемся).
+[competitors.md](docs/competitors.md) (кто ещё решает эту задачу и чем мы отличаемся),
+[ai-usage.md](docs/ai-usage.md) (где и как использованы нейросети).
 
 ## Архитектура
 
