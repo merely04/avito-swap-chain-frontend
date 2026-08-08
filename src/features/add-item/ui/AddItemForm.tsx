@@ -1,12 +1,15 @@
-import { useState, type ChangeEvent, type SubmitEvent } from 'react'
+import { useRef, useState, type ChangeEvent, type SubmitEvent } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import {
   CATEGORIES,
   CONDITIONS,
   CONDITION_LABEL,
+  recognizeItem,
   type ItemCondition,
   type ItemDraft,
 } from '@/entities/item'
-import { Button, Field, IconImage, Input, Select } from '@/shared/ui'
+import { Button, Field, IconImage, Input, Select, Status } from '@/shared/ui'
+import { recognitionPatch, type RecognizedField } from '../lib/recognitionPatch'
 
 /** Первый шаг публикации: сама вещь, без желания. */
 export type ItemFormValues = Omit<ItemDraft, 'wish'>
@@ -22,7 +25,21 @@ export function AddItemForm({ initial, onSubmit }: AddItemFormProps) {
     initial ?? { title: '', category: CATEGORIES[0], condition: 'good' },
   )
 
+  // Поля, которые человек заполнил сам: распознавание приходит с задержкой и их не трогает.
+  const edited = useRef(new Set<RecognizedField>())
+
   const patch = (part: Partial<ItemFormValues>) => setValues((prev) => ({ ...prev, ...part }))
+
+  const edit = (field: RecognizedField, part: Partial<ItemFormValues>) => {
+    edited.current.add(field)
+    patch(part)
+  }
+
+  // Распознавание — подсказка: не удалось, значит форма обычная и заполняется руками.
+  const recognition = useMutation({
+    mutationFn: (file: File) => recognizeItem(file),
+    onSuccess: (recognized) => patch(recognitionPatch(recognized, edited.current)),
+  })
 
   const pickPhoto = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -31,6 +48,7 @@ export function AddItemForm({ initial, onSubmit }: AddItemFormProps) {
     // Ссылку на прежнее фото освобождаем, иначе замена фото копит их в памяти.
     if (values.photoUrl) URL.revokeObjectURL(values.photoUrl)
     patch({ photoUrl: URL.createObjectURL(file) })
+    recognition.mutate(file)
   }
 
   const submit = (event: SubmitEvent<HTMLFormElement>) => {
@@ -53,11 +71,18 @@ export function AddItemForm({ initial, onSubmit }: AddItemFormProps) {
         <input type="file" accept="image/*" className="sr-only" onChange={pickPhoto} />
       </label>
 
+      {recognition.isPending && <Status>Распознаём вещь на фото…</Status>}
+      {recognition.isSuccess && (
+        <Status tone="muted">Заполнили по фото — проверьте и поправьте</Status>
+      )}
+      {recognition.isError && <Status tone="muted">Не узнали вещь на фото — заполните сами</Status>}
+
       <Field label="Название">
         <Input
           value={values.title}
-          onChange={(event) => patch({ title: event.target.value })}
+          onChange={(event) => edit('title', { title: event.target.value })}
           placeholder="Например, горный велосипед"
+          disabled={recognition.isPending}
           required
         />
       </Field>
@@ -65,7 +90,8 @@ export function AddItemForm({ initial, onSubmit }: AddItemFormProps) {
       <Field label="Категория">
         <Select
           value={values.category}
-          onChange={(event) => patch({ category: event.target.value })}
+          onChange={(event) => edit('category', { category: event.target.value })}
+          disabled={recognition.isPending}
         >
           {CATEGORIES.map((category) => (
             <option key={category} value={category}>
@@ -78,7 +104,10 @@ export function AddItemForm({ initial, onSubmit }: AddItemFormProps) {
       <Field label="Состояние">
         <Select
           value={values.condition}
-          onChange={(event) => patch({ condition: event.target.value as ItemCondition })}
+          onChange={(event) =>
+            edit('condition', { condition: event.target.value as ItemCondition })
+          }
+          disabled={recognition.isPending}
         >
           {CONDITIONS.map((condition) => (
             <option key={condition} value={condition}>
@@ -89,7 +118,7 @@ export function AddItemForm({ initial, onSubmit }: AddItemFormProps) {
       </Field>
 
       <div className="mt-auto pt-2">
-        <Button type="submit" fullWidth disabled={!values.title.trim()}>
+        <Button type="submit" fullWidth disabled={recognition.isPending || !values.title.trim()}>
           Далее: что хотите взамен
         </Button>
       </div>
