@@ -21,7 +21,9 @@ export function CreateOfferPage() {
 
   return (
     <Screen>
-      <ScreenHeader title={step === 1 ? 'Новое объявление' : 'Что хотите взамен'} onBack={goBack}>
+      {/* Заголовок один на оба шага: на втором он повторял бы подпись поля «Что хотите взамен»
+          прямо под собой и расходился с крошками. Где мы — говорит счётчик шагов. */}
+      <ScreenHeader title="Новое объявление" onBack={goBack}>
         <Status tone="muted">Шаг {step} из 2</Status>
       </ScreenHeader>
 

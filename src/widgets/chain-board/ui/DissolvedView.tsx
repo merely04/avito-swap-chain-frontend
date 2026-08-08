@@ -9,8 +9,10 @@ export function DissolvedView({ chain, me }: ChainViewProps) {
   const navigate = useNavigate()
   const decliner = findDecliner(chain)
 
+  // Сам себя пользователь в распавшуюся цепочку приводит только кнопкой «Выйти» — отказ от
+  // предложения её не распускает. Значит и назвать это надо тем же словом, что было на кнопке.
   const reason = decliner?.isMe
-    ? 'Вы отклонили обмен.'
+    ? 'Вы вышли из цепочки.'
     : decliner
       ? `Участник ${decliner.name} отклонил обмен.`
       : 'Один из участников отказался.'
@@ -26,8 +28,8 @@ export function DissolvedView({ chain, me }: ChainViewProps) {
       </Banner>
 
       <BoardFooter>
-        <Button fullWidth onClick={() => navigate('/')}>
-          Искать новую цепочку
+        <Button fullWidth onClick={() => navigate('/exchange')}>
+          К другим вариантам
         </Button>
       </BoardFooter>
     </>

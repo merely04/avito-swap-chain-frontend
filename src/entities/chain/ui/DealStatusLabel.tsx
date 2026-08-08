@@ -18,9 +18,11 @@ export function DealStatusLabel({ chain }: { chain: Chain }) {
   const mine = needsMyAction(chain)
 
   if (chain.status === 'formed') {
+    // Голое «1 из 3» рядом с заголовком читается как номер цепочки, а не как счёт ответов.
+    // Глагол тот же, что в карточке варианта, — одно слово на согласие во всём разделе.
     return (
       <Status tone={mine ? 'attention' : 'neutral'}>
-        {countConfirmed(chain)} из {chain.participants.length}
+        Согласны {countConfirmed(chain)} из {chain.participants.length}
       </Status>
     )
   }

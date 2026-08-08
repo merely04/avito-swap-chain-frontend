@@ -24,7 +24,7 @@ export function DeclinedView({ chain, me, neighbours }: ChainViewProps) {
 
       <BoardFooter>
         <Button fullWidth onClick={() => navigate('/exchange')}>
-          К другим предложениям
+          К другим вариантам
         </Button>
       </BoardFooter>
     </>

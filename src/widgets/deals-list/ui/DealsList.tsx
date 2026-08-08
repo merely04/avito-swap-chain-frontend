@@ -17,7 +17,18 @@ export function DealsList() {
   // «Варианты обмена» — здесь только то, во что человек уже вошёл, и история.
   const deals = data.filter((chain) => !isOpenOffer(chain) && chain.status !== 'cancelled')
   if (deals.length === 0) {
-    return <Notice>Обменов пока нет. Добавьте вещь — сервис подберёт для неё цепочку.</Notice>
+    // Обмены заводятся не здесь, а у объявления, — из пустого списка туда и уводим.
+    return (
+      <div className="flex flex-col items-center">
+        <Notice>Обменов пока нет. Включите обмен у объявления — сервис подберёт цепочку.</Notice>
+        <Link
+          to="/"
+          className="rounded-sm text-[13px] font-semibold text-brand outline-offset-4 focus-visible:outline-2 focus-visible:outline-brand"
+        >
+          К моим объявлениям
+        </Link>
+      </div>
+    )
   }
 
   return (

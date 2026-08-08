@@ -94,8 +94,10 @@ export function ChainRibbon({ participants, neighbours }: ChainRibbonProps) {
         <span className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 -rotate-90 text-ink-3">
           <IconArrowRight size={15} />
         </span>
+        {/* Подпись — про то, что круг даёт человеку, а не про его геометрию: замкнутость видна
+            и без слов. Про «обмен только целиком» здесь не пишем — это сказано у самой кнопки. */}
         <small className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 bg-card px-1.5 text-[11px] whitespace-nowrap text-ink-3">
-          круг замыкается
+          каждый получает то, что искал
         </small>
       </div>
     </div>

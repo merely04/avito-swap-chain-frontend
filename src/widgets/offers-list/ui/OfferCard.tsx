@@ -45,7 +45,9 @@ export function OfferCard({ chain, variants }: OfferCardProps) {
 
       {cancelled ? (
         <p className="text-[12.5px] text-ink-2">
-          <b className="font-bold">{cancelReason(chain)}.</b> Вещь участвует в подборе дальше.
+          <b className="font-bold">{cancelReason(chain)}.</b>
+          {/* Про свою вещь добавлять нечего: она уже в собравшейся цепочке, а не «в подборе». */}
+          {me.givesItem.id !== chain.cancelledItemId && ' Вещь участвует в подборе дальше.'}
         </p>
       ) : (
         <RespondToExchange chainId={chain.id} />

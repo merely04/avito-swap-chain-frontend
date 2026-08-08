@@ -11,6 +11,10 @@ import { BoardFooter } from './BoardFooter'
 export function CancelledView({ chain, me, neighbours }: ChainViewProps) {
   const navigate = useNavigate()
 
+  // Ушла моя вещь или чужая — от этого зависит, что делать дальше. Своя уже заблокирована
+  // в собравшейся цепочке, и «участвует в подборе дальше» было бы про неё неправдой.
+  const mineIsTaken = me.givesItem.id === chain.cancelledItemId
+
   return (
     <>
       {/* Не красный: человек ничего не потерял и ничего не сделал не так — обмен просто
@@ -21,13 +25,16 @@ export function CancelledView({ chain, me, neighbours }: ChainViewProps) {
 
       <ExchangeSummary me={me} neighbours={neighbours} />
 
-      <Banner tone="ok" icon={<IconCheck size={20} />}>
-        Вещь «{me.givesItem.title}» участвует в подборе дальше.
-      </Banner>
+      {/* Про свою вещь всё сказано баннером выше — второй раз повторять незачем. */}
+      {!mineIsTaken && (
+        <Banner tone="ok" icon={<IconCheck size={20} />}>
+          Вещь «{me.givesItem.title}» участвует в подборе дальше.
+        </Banner>
+      )}
 
       <BoardFooter>
         <Button fullWidth onClick={() => navigate('/exchange')}>
-          К другим предложениям
+          {mineIsTaken ? 'К моим обменам' : 'К другим вариантам'}
         </Button>
       </BoardFooter>
     </>
