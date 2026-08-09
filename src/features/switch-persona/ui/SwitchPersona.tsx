@@ -11,6 +11,13 @@ import {
 import { asset } from '@/shared/lib'
 import { isBackendConnected } from '@/shared/config/backend'
 
+/** Строка переключателя: имя в поле, телефон для входа, корона у сотрудника ПВЗ. */
+interface SwitchOption {
+  name: string
+  phone: string
+  isAdmin?: boolean
+}
+
 const SELECT_CLASS =
   'cursor-pointer rounded-chip border border-line bg-page py-1 pr-1.5 pl-2 font-sans text-[12.5px] font-bold text-ink focus-visible:outline-2 focus-visible:outline-brand'
 
@@ -81,11 +88,11 @@ export function SwitchPersona() {
 
   // Список для выбора: с бэкендом это засеянные демо-пользователи, и в нём может не быть
   // текущего — тот, кто зарегистрировался сам, всё равно должен видеть себя в поле.
-  const options = isBackendConnected
+  const options: SwitchOption[] = isBackendConnected
     ? [
         ...(DEMO_USERS.some((demo) => demo.name === user.name)
           ? []
-          : [{ name: user.name, phone: '' }]),
+          : [{ name: user.name, phone: '', isAdmin: user.isAdmin }]),
         ...DEMO_USERS,
       ]
     : PERSONAS.map((persona) => ({ name: persona.name, phone: persona.id }))
@@ -117,9 +124,8 @@ export function SwitchPersona() {
               key={option.phone || option.name}
               value={isBackendConnected ? option.name : option.phone}
             >
-              {/* Корона и в списке: роль известна только у текущего аккаунта — про остальных
-                  бэкенд ничего не говорит, пока под ними не войдёшь. */}
-              {user.isAdmin && option.name === user.name ? `${option.name} 👑` : option.name}
+              {/* Корона и в списке — иначе на демо не видно, под кем открывать админку ПВЗ. */}
+              {option.isAdmin ? `${option.name} 👑` : option.name}
             </option>
           ))}
         </select>
