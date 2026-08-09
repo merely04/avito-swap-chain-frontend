@@ -24,9 +24,9 @@ export interface CurrentUser {
   rating?: number
   reviews?: number
   /**
-   * Роль появилась в контракте 0.5.0 вместе с админкой ПВЗ. На стенде развёрнут 0.4.0,
-   * там её ещё нет — поэтому необязательная: интерфейс просто не помечает аккаунт,
-   * пока бэкенд не начнёт присылать роль.
+   * Роль есть в контракте админки ПВЗ (прислан отдельно, в общий `openapi.yaml` ещё не влит —
+   * номер версии там совпал с нашей, но набор ручек другой). В том, что раскатано, роли нет,
+   * поэтому поле необязательное: интерфейс просто не помечает аккаунт, пока она не придёт.
    */
   isAdmin?: boolean
 }
@@ -59,8 +59,8 @@ let sessionUserId: number | undefined
 const fromSession = (session: Session): CurrentUser => {
   sessionUserId = session.user.id
 
-  // `role` есть в контракте 0.5.0, а клиент сгенерирован по 0.4.0 — читаем мягко, чтобы
-  // не ждать перегенерации: до деплоя поле просто не приходит.
+  // `role` живёт в контракте админки, которого нет в общем `openapi.yaml`, — читаем мягко,
+  // чтобы не ждать его вливания: до тех пор поле просто не приходит.
   const { role } = session.user as typeof session.user & { role?: string }
 
   return { id: String(session.user.id), name: session.user.username, isAdmin: role === 'ADMIN' }
