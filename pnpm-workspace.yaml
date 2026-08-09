@@ -5,8 +5,8 @@
 verifyDepsBeforeRun: false
 minimumReleaseAge: 0
 
-# esbuild собирает нативный бинарник постустановочным скриптом. Локально он уже
-# одобрен, а на чистой машине CI pnpm по умолчанию такие скрипты блокирует и падает —
-# поэтому разрешаем явно.
-onlyBuiltDependencies:
-  - esbuild
+# esbuild собирает нативный бинарник постустановочным скриптом. pnpm 11 такие скрипты
+# по умолчанию не выполняет и валит install (strictDepBuilds), поэтому разрешаем явно.
+# Настройка называется allowBuilds: onlyBuiltDependencies из прежних версий удалён.
+allowBuilds:
+  esbuild: true
