@@ -237,11 +237,28 @@ async function currentUserId(): Promise<number> {
   return sessionUserId
 }
 
+/**
+ * Отметки получения, сделанные при подключённом бэкенде. Стадии передачи в контракте нет
+ * (см. `shared/config/backend`), хранить их серверу негде — держим на фронте, иначе обмен
+ * на реальных данных обрывается на полпути и кнопка «получил» выглядит сломанной.
+ */
+const localReceipts = new Set<string>()
+
+const withLocalReceipt = (chain: Chain): Chain =>
+  localReceipts.has(chain.id)
+    ? {
+        ...chain,
+        participants: chain.participants.map((p) =>
+          p.isMe ? { ...p, receiptConfirmed: true } : p,
+        ),
+      }
+    : chain
+
 export async function getMyChains(): Promise<Chain[]> {
   if (isBackendConnected) {
     const meId = await currentUserId()
     const { chains: list } = unwrap<ChainList>(await listChains())
-    return list.map((chain) => mapChain(chain, meId))
+    return list.map((chain) => withLocalReceipt(mapChain(chain, meId)))
   }
 
   await delay(300)
@@ -255,7 +272,7 @@ export async function getMyChains(): Promise<Chain[]> {
 export async function getChain(id: string): Promise<Chain> {
   if (isBackendConnected) {
     const meId = await currentUserId()
-    return mapChain(unwrap<ApiChain>(await getChainRequest(Number(id))), meId)
+    return withLocalReceipt(mapChain(unwrap<ApiChain>(await getChainRequest(Number(id))), meId))
   }
 
   await delay(250)
@@ -339,6 +356,14 @@ export async function respondToChain(id: string, decision: ChainDecision): Promi
 
 /** Выйти из цепочки до общего подтверждения — вещь снова свободна. */
 export async function leaveChain(id: string): Promise<void> {
+  if (isBackendConnected) {
+    // Отдельной ручки выхода в контракте нет: отказ — это решение по цепочке.
+    // ⚠️ Бэкенд на `DECLINED` распускает цепочку целиком, замену вышедшему не ищет —
+    // это расходится с обещанием интерфейса, см. `docs/product-flow.md`.
+    unwrap(await submitChainDecision(Number(id), { decision: 'DECLINED' }))
+    return
+  }
+
   await delay(400)
   find(id)
   replace(id, (chain) => ({
@@ -352,6 +377,11 @@ export async function leaveChain(id: string): Promise<void> {
  * когда получение подтвердят все — обмен состоялся только тогда, когда его закрыли с обеих сторон.
  */
 export async function confirmReceipt(id: string): Promise<void> {
+  if (isBackendConnected) {
+    localReceipts.add(id)
+    return
+  }
+
   await delay(400)
   find(id)
   replace(id, (chain) => confirmReceiptFor(chain, currentPersonaId()))
