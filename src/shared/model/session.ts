@@ -23,6 +23,12 @@ export interface CurrentUser {
   avatarUrl?: string
   rating?: number
   reviews?: number
+  /**
+   * Роль появилась в контракте 0.5.0 вместе с админкой ПВЗ. На стенде развёрнут 0.4.0,
+   * там её ещё нет — поэтому необязательная: интерфейс просто не помечает аккаунт,
+   * пока бэкенд не начнёт присылать роль.
+   */
+  isAdmin?: boolean
 }
 
 export const sessionKeys = { current: () => ['session'] as const }
@@ -46,7 +52,12 @@ let sessionUserId: number | undefined
 
 const fromSession = (session: Session): CurrentUser => {
   sessionUserId = session.user.id
-  return { id: String(session.user.id), name: session.user.username }
+
+  // `role` есть в контракте 0.5.0, а клиент сгенерирован по 0.4.0 — читаем мягко, чтобы
+  // не ждать перегенерации: до деплоя поле просто не приходит.
+  const { role } = session.user as typeof session.user & { role?: string }
+
+  return { id: String(session.user.id), name: session.user.username, isAdmin: role === 'ADMIN' }
 }
 
 const fromPersona = (): CurrentUser => {

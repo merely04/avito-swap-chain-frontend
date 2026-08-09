@@ -18,26 +18,38 @@ const SELECT_CLASS =
  * Аватар аккаунта — крайний правый элемент шапки, как у Авито (40px, круглый).
  * Он же показывает, за кого сейчас смотрят: имя в поле дублируется лицом. У пользователя
  * с бэкенда фотографии нет — тогда кружок с инициалом, выдумывать ему лицо незачем.
+ *
+ * Админа помечаем короной: на демо переключаются между обычным человеком и сотрудником ПВЗ,
+ * и по одному имени не понять, почему у одного аккаунта вдруг появились чужие доставки.
  */
 function AccountAvatar({ user }: { user: CurrentUser }) {
-  if (user.avatarUrl) {
-    return (
-      <img
-        src={asset(user.avatarUrl)}
-        alt=""
-        width={40}
-        height={40}
-        className="size-10 shrink-0 rounded-full object-cover"
-      />
-    )
-  }
-
-  return (
+  const face = user.avatarUrl ? (
+    <img
+      src={asset(user.avatarUrl)}
+      alt=""
+      width={40}
+      height={40}
+      className="size-10 rounded-full object-cover"
+    />
+  ) : (
     <span
       aria-hidden
-      className="grid size-10 shrink-0 place-items-center rounded-full bg-line text-[15px] font-bold text-ink-2"
+      className="grid size-10 place-items-center rounded-full bg-line text-[15px] font-bold text-ink-2"
     >
       {user.name.slice(0, 1).toUpperCase()}
+    </span>
+  )
+
+  if (!user.isAdmin) return <span className="shrink-0">{face}</span>
+
+  return (
+    <span className="relative shrink-0" title="Аккаунт сотрудника ПВЗ">
+      {face}
+      {/* Корона садится на угол аватара, но не вылезает за ярус шапки: выше ей места нет. */}
+      <span aria-hidden className="absolute -top-0.5 -right-1 text-[13px] leading-none">
+        👑
+      </span>
+      <span className="sr-only">Аккаунт сотрудника ПВЗ</span>
     </span>
   )
 }
@@ -105,7 +117,9 @@ export function SwitchPersona() {
               key={option.phone || option.name}
               value={isBackendConnected ? option.name : option.phone}
             >
-              {option.name}
+              {/* Корона и в списке: роль известна только у текущего аккаунта — про остальных
+                  бэкенд ничего не говорит, пока под ними не войдёшь. */}
+              {user.isAdmin && option.name === user.name ? `${option.name} 👑` : option.name}
             </option>
           ))}
         </select>
