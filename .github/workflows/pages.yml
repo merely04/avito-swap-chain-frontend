@@ -23,9 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Версию не указываем: она закреплена в package.json → packageManager,
+      # и второе объявление здесь ломает установку конфликтом версий.
       - uses: pnpm/action-setup@v4
-        with:
-          version: 11
 
       - uses: actions/setup-node@v4
         with:
