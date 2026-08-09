@@ -25,7 +25,8 @@ export const chainKeys = {
 
 /**
  * Ответ участника на предложение: лайк — «этот вариант мне подходит», дизлайк — отказ
- * от одного варианта, а не от обмена вообще. Игнор — просто отсутствие ответа.
+ * от этого варианта, а не от обмена вообще: вариант распадётся, но вещь останется
+ * в подборе. Игнор — просто отсутствие ответа.
  */
 export type ChainDecision = 'like' | 'dislike'
 
@@ -296,8 +297,12 @@ function cancelRivals(formedId: string) {
 
 /**
  * Ответ на предложение. Лайк — «вариант подходит»: обмен стартует, только когда лайкнули все,
- * до этого вещь остаётся у владельца и участвует в других вариантах. Дизлайк снимает с варианта
- * одного человека, а не распускает цепочку: остальным сервис ищет замену.
+ * до этого вещь остаётся у владельца и участвует в других вариантах.
+ *
+ * Дизлайк распускает цепочку целиком. Замену вышедшему сервис не ищет: в цепочке максимум
+ * три участника, и собрать новый вариант с нуля дешевле, чем латать старый — часть тех же
+ * людей в него обычно и попадает. Отказ от варианта при этом не равен отказу от обмена:
+ * вещь остаётся свободной и участвует в других вариантах.
  */
 export async function respondToChain(id: string, decision: ChainDecision): Promise<void> {
   if (isBackendConnected) {
@@ -314,7 +319,10 @@ export async function respondToChain(id: string, decision: ChainDecision): Promi
   const personaId = currentPersonaId()
 
   if (decision === 'dislike') {
-    replace(id, (chain) => withPersonaStatus(chain, personaId, 'declined'))
+    replace(id, (chain) => ({
+      ...withPersonaStatus(chain, personaId, 'declined'),
+      status: 'dissolved',
+    }))
     return
   }
 
@@ -344,9 +352,8 @@ export async function respondToChain(id: string, decision: ChainDecision): Promi
 /** Выйти из цепочки до общего подтверждения — вещь снова свободна. */
 export async function leaveChain(id: string): Promise<void> {
   if (isBackendConnected) {
-    // Отдельной ручки выхода в контракте нет: отказ — это решение по цепочке.
-    // ⚠️ Бэкенд на `DECLINED` распускает цепочку целиком, замену вышедшему не ищет —
-    // это расходится с обещанием интерфейса, см. `docs/product-flow.md`.
+    // Отдельной ручки выхода в контракте нет: выход — это то же решение `DECLINED`,
+    // что и дизлайк, и цепочка распускается целиком.
     unwrap(await submitChainDecision(Number(id), { decision: 'DECLINED' }))
     return
   }
