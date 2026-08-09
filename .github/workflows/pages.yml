@@ -32,7 +32,11 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      # Одобрение сборочных скриптов передаём переменной: pnpm 11 больше не читает
+      # поле "pnpm" из package.json, а на чистой машине install падает без него.
       - run: pnpm install --frozen-lockfile
+        env:
+          PNPM_CONFIG_ONLY_BUILT_DEPENDENCIES: esbuild
 
       # Тесты и типы гоняются здесь же: выкладывать сломанное демо хуже, чем не выложить.
       - run: pnpm test
