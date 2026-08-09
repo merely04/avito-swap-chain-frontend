@@ -1,15 +1,15 @@
 import { unwrap } from '@/shared/api/fetcher'
 import {
   getChain as getChainRequest,
-  getSession,
   listChains,
   submitChainDecision,
 } from '@/shared/api/generated/endpoints'
-import type { Chain as ApiChain, ChainList, Session } from '@/shared/api/generated/model'
+import type { Chain as ApiChain, ChainList } from '@/shared/api/generated/model'
 import { isBackendConnected } from '@/shared/config/backend'
 import { notify } from '@/shared/model/notifications'
 import { mapChain } from './mapChain'
 import { currentPersonaId, PERSONAS, type Persona } from '@/shared/model/persona'
+import { currentUserId } from '@/shared/model/session'
 import { confirmReceiptFor } from '../lib/participants'
 import type { Chain, ChainParticipant, ParticipantStatus } from '../model/types'
 
@@ -224,19 +224,6 @@ const withPersonaStatus = (chain: Chain, personaId: string, status: ParticipantS
 })
 
 /** Обмены, в которых участвует текущий пользователь, — чужие в кабинет не попадают. */
-/**
- * Кто «я» на стороне бэкенда. Сессия одна на приложение, поэтому держим её в модуле:
- * запрашивать её перед каждым чтением цепочек — лишний round-trip на каждый рендер.
- */
-let sessionUserId: number | undefined
-
-async function currentUserId(): Promise<number> {
-  if (sessionUserId === undefined) {
-    sessionUserId = unwrap<Session>(await getSession()).user.id
-  }
-  return sessionUserId
-}
-
 /**
  * Отметки получения, сделанные при подключённом бэкенде. Стадии передачи в контракте нет
  * (см. `shared/config/backend`), хранить их серверу негде — держим на фронте, иначе обмен

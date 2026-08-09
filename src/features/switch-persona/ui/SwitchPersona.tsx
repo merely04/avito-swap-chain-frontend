@@ -1,50 +1,127 @@
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { PERSONAS, usePersonaStore } from '@/shared/model/persona'
+import {
+  DEMO_USERS,
+  getCurrentUser,
+  login,
+  logout,
+  sessionKeys,
+  type CurrentUser,
+} from '@/shared/model/session'
 import { asset } from '@/shared/lib'
+import { isBackendConnected } from '@/shared/config/backend'
+
+const SELECT_CLASS =
+  'cursor-pointer rounded-chip border border-line bg-page py-1 pr-1.5 pl-2 font-sans text-[12.5px] font-bold text-ink focus-visible:outline-2 focus-visible:outline-brand'
 
 /**
- * Демо-инструмент: посмотреть один и тот же обмен глазами разных участников —
- * иначе цепочку из четырёх человек по ссылке не показать. В продукте на этом месте
- * был бы аккаунт, поэтому в бизнес-логику переключатель не вмешивается: он только
- * меняет, кто «я», а `isMe` и состав кабинета считает api.
+ * Аватар аккаунта — крайний правый элемент шапки, как у Авито (40px, круглый).
+ * Он же показывает, за кого сейчас смотрят: имя в поле дублируется лицом. У пользователя
+ * с бэкенда фотографии нет — тогда кружок с инициалом, выдумывать ему лицо незачем.
  */
-export function SwitchPersona() {
-  const personaId = usePersonaStore((state) => state.personaId)
-  const setPersonaId = usePersonaStore((state) => state.setPersonaId)
-  const queryClient = useQueryClient()
-  const persona = PERSONAS.find((item) => item.id === personaId) ?? PERSONAS[0]
-
-  return (
-    <label className="flex items-center gap-2">
-      {/* На узких окнах подпись прячется: в одну строку шапки лезут лок-ап, поиск и аккаунт,
-          а смысл переключателя и так виден по имени в поле. Экранным читалкам она остаётся. */}
-      <span className="text-[11px] leading-tight text-ink-3 max-sm:sr-only">Смотрю как</span>
-      <select
-        title="Смотрю как"
-        value={personaId}
-        onChange={(event) => {
-          setPersonaId(event.target.value)
-          // В кеше лежат ответы прошлой персоны — без сброса экран показал бы чужой кабинет.
-          queryClient.resetQueries()
-        }}
-        className="cursor-pointer rounded-chip border border-line bg-page py-1 pr-1.5 pl-2 font-sans text-[12.5px] font-bold text-ink focus-visible:outline-2 focus-visible:outline-brand"
-      >
-        {PERSONAS.map((persona) => (
-          <option key={persona.id} value={persona.id}>
-            {persona.name}
-          </option>
-        ))}
-      </select>
-
-      {/* Аватар аккаунта — крайний правый элемент шапки, как у Авито (40px, круглый).
-          Он же показывает, за кого сейчас смотрят: имя в поле дублируется лицом. */}
+function AccountAvatar({ user }: { user: CurrentUser }) {
+  if (user.avatarUrl) {
+    return (
       <img
-        src={asset(persona.avatarUrl)}
+        src={asset(user.avatarUrl)}
         alt=""
         width={40}
         height={40}
         className="size-10 shrink-0 rounded-full object-cover"
       />
-    </label>
+    )
+  }
+
+  return (
+    <span
+      aria-hidden
+      className="grid size-10 shrink-0 place-items-center rounded-full bg-line text-[15px] font-bold text-ink-2"
+    >
+      {user.name.slice(0, 1).toUpperCase()}
+    </span>
+  )
+}
+
+/**
+ * Демо-инструмент: посмотреть один и тот же обмен глазами разных участников — иначе
+ * цепочку из трёх человек по ссылке не показать.
+ *
+ * На моках он только меняет, кто «я»: в бизнес-логику не вмешивается, `isMe` и состав
+ * кабинета считает api. С бэкендом смотреть чужими глазами можно только по-настоящему —
+ * пользователя опознаёт кука, поэтому переключение это выход и вход под другим телефоном.
+ */
+export function SwitchPersona() {
+  const personaId = usePersonaStore((state) => state.personaId)
+  const setPersonaId = usePersonaStore((state) => state.setPersonaId)
+  const queryClient = useQueryClient()
+  const { data: user } = useQuery({ queryKey: sessionKeys.current(), queryFn: getCurrentUser })
+
+  const switchUser = useMutation({
+    mutationFn: async (phone: string) => {
+      await logout()
+      await login(phone)
+    },
+    // В кеше лежат ответы прошлого пользователя — без сброса экран показал бы чужой кабинет.
+    onSettled: () => queryClient.resetQueries(),
+  })
+
+  if (!user) return null
+
+  // Список для выбора: с бэкендом это засеянные демо-пользователи, и в нём может не быть
+  // текущего — тот, кто зарегистрировался сам, всё равно должен видеть себя в поле.
+  const options = isBackendConnected
+    ? [
+        ...(DEMO_USERS.some((demo) => demo.name === user.name)
+          ? []
+          : [{ name: user.name, phone: '' }]),
+        ...DEMO_USERS,
+      ]
+    : PERSONAS.map((persona) => ({ name: persona.name, phone: persona.id }))
+
+  return (
+    <span className="flex items-center gap-2">
+      <label className="flex items-center gap-2">
+        {/* На узких окнах подпись прячется: в одну строку шапки лезут лок-ап, поиск и аккаунт,
+            а смысл переключателя и так виден по имени в поле. Экранным читалкам она остаётся. */}
+        <span className="text-[11px] leading-tight text-ink-3 max-sm:sr-only">Смотрю как</span>
+        <select
+          title="Смотрю как"
+          value={isBackendConnected ? user.name : personaId}
+          disabled={switchUser.isPending}
+          onChange={(event) => {
+            if (!isBackendConnected) {
+              setPersonaId(event.target.value)
+              queryClient.resetQueries()
+              return
+            }
+
+            const chosen = options.find((option) => option.name === event.target.value)
+            if (chosen?.phone) switchUser.mutate(chosen.phone)
+          }}
+          className={SELECT_CLASS}
+        >
+          {options.map((option) => (
+            <option
+              key={option.phone || option.name}
+              value={isBackendConnected ? option.name : option.phone}
+            >
+              {option.name}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      {isBackendConnected && (
+        <button
+          type="button"
+          onClick={() => logout().then(() => queryClient.resetQueries())}
+          className="cursor-pointer rounded-sm text-[11px] leading-tight text-ink-3 hover:text-ink-2 focus-visible:outline-2 focus-visible:outline-brand"
+        >
+          Выйти
+        </button>
+      )}
+
+      <AccountAvatar user={user} />
+    </span>
   )
 }
