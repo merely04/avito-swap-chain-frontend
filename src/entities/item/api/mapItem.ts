@@ -6,11 +6,15 @@ import type { Item, ItemStatus } from '../model/types'
  * `ANALYZING` не сводится ни к одному из наших: вещь уже с желанием, но в подборе её ещё
  * нет. Раньше он показывался как `idle` — карточка предлагала включить обмен вещи, у которой
  * он включён, и выглядела зависшей. Поэтому у ожидания разбора своё состояние.
+ *
+ * `WITHDRAWN` — наоборот, точное попадание в `idle`: снятие с обмена убирает желание, а без
+ * желания вещь и есть обычное объявление, у которого обмен не включён.
  */
 const STATUS: Record<ApiItem['status'], ItemStatus> = {
   ANALYZING: 'analyzing',
   MATCHING: 'searching',
   LOCKED: 'reserved',
+  WITHDRAWN: 'idle',
 }
 
 /**
