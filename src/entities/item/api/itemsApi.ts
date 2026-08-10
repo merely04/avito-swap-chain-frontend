@@ -256,7 +256,7 @@ export async function withdrawItem(id: string): Promise<Item> {
   const item = items.find((i) => i.id === id)
   if (!item) throw new Error(`Объявление ${id} не найдено`)
 
-  const updated: Item = { ...item, wish: [], status: 'idle' }
+  const updated: Item = { ...item, wish: [], status: 'withdrawn' }
   itemsByOwner = { ...itemsByOwner, [ownerId]: items.map((i) => (i.id === id ? updated : i)) }
   return updated
 }
@@ -295,7 +295,8 @@ export async function setItemWish(id: string, wish: Wish[]): Promise<Item> {
   const updated: Item = {
     ...item,
     wish: usable,
-    status: item.status === 'idle' ? 'searching' : item.status,
+    // Снятая вещь возвращается в подбор так же, как никогда не включённая.
+    status: item.status === 'idle' || item.status === 'withdrawn' ? 'searching' : item.status,
   }
   itemsByOwner = { ...itemsByOwner, [ownerId]: items.map((i) => (i.id === id ? updated : i)) }
   return updated

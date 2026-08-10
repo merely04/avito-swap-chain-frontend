@@ -102,10 +102,17 @@ describe('withdrawItem — снятие с обмена', () => {
     await setItemWish('3', wish)
     const withdrawn = await withdrawItem('3')
 
-    expect(withdrawn.status).toBe('idle')
+    expect(withdrawn.status).toBe('withdrawn')
     expect(withdrawn.wish).toEqual([])
     // Не удаление: объявление никуда не делось, его снова можно отдать в обмен.
-    expect(await itemOf('3')).toMatchObject({ status: 'idle', title: withdrawn.title })
+    expect(await itemOf('3')).toMatchObject({ status: 'withdrawn', title: withdrawn.title })
+  })
+
+  it('снятую вещь можно вернуть в обмен', async () => {
+    await setItemWish('3', wish)
+    await withdrawItem('3')
+
+    expect((await setItemWish('3', wish)).status).toBe('searching')
   })
 
   it('чужое объявление снять нельзя', async () => {

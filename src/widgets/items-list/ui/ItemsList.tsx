@@ -15,6 +15,18 @@ import { Button, EmptyState, Notice } from '@/shared/ui'
 function actionFor(item: Item) {
   // Обмен ещё не включён — предлагаем включить прямо на объявлении.
   if (item.status === 'idle') return <EnableBarterButton itemId={item.id} />
+
+  // Снятую вещь подписываем, но выход не закрываем: включить обмен обратно — то же
+  // действие, что и в первый раз, и без кнопки карточка снова стала бы тупиком.
+  if (item.status === 'withdrawn') {
+    return (
+      <span className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+        <ItemStatusLabel status={item.status} />
+        <EnableBarterButton itemId={item.id} />
+      </span>
+    )
+  }
+
   if (item.status === 'reserved') return undefined
 
   return (
