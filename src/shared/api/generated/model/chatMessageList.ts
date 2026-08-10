@@ -5,12 +5,10 @@
  * Shared REST and realtime contract for the swap-chain MVP.
  * OpenAPI spec version: 0.6.0
  */
-import type { ChainEdge } from './chainEdge';
+import type { ChatMessage } from './chatMessage';
 
-export interface CreateChainRequest {
-  /**
-     * @minItems 2
-     * @maxItems 3
-     */
-  edges: ChainEdge[];
+export interface ChatMessageList {
+  messages: ChatMessage[];
+  /** @nullable */
+  nextAfterId?: number | null;
 }

@@ -5,13 +5,14 @@
  * Shared REST and realtime contract for the swap-chain MVP.
  * OpenAPI spec version: 0.6.0
  */
-import type { Item } from './item';
-import type { ParticipantStatus } from './participantStatus';
 import type { UserSummary } from './userSummary';
 
-export interface ChainParticipant {
-  user: UserSummary;
-  giveItem: Item;
-  receiveItem: Item;
-  status: ParticipantStatus;
+export interface ChatMessage {
+  id: number;
+  chainId: number;
+  sender: UserSummary;
+  recipient: UserSummary;
+  clientMessageId: string;
+  text: string;
+  createdAt: string;
 }

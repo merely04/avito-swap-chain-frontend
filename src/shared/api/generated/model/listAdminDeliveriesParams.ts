@@ -5,12 +5,17 @@
  * Shared REST and realtime contract for the swap-chain MVP.
  * OpenAPI spec version: 0.6.0
  */
+import type { AdminDeliveryStatus } from './adminDeliveryStatus';
 
-export type ListItemsParams = {
+export type ListAdminDeliveriesParams = {
+status?: AdminDeliveryStatus;
 /**
  * @minimum 1
  * @maximum 100
  */
 limit?: number;
+/**
+ * Delivery ID returned as nextCursor by the previous page.
+ */
 cursor?: string;
 };
