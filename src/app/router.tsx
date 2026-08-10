@@ -29,7 +29,9 @@ export const router = createBrowserRouter(
         { path: '/items/new', element: <CreateOfferPage /> },
         { path: '/items/:id/barter', element: <EnableBarterPage /> },
         { path: '/exchange/:id', element: <ChainPage /> },
-        { path: '/messages/:itemId', element: <ThreadPage /> },
+        // Переписка адресуется парой «цепочка + собеседник»: она привязана к ребру круга
+        // обмена, а не к вещи — с одним человеком в двух цепочках это два разных разговора.
+        { path: '/messages/:chainId/:counterpartId', element: <ThreadPage /> },
       ],
     },
   ],
