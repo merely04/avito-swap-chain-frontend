@@ -1,14 +1,13 @@
 // Наружу отдаём только то, чем пользуются другие слои: остальное — внутренности слайса.
 // Ленту реплик экраны читают через `useThreadMessages`, а не `getMessages`: там живут
 // курсор, long-poll и склейка, и звать их руками негде.
-export type { Message, ThreadRef } from './model/types'
+export type { Message, MessageDraft, ThreadRef } from './model/types'
 export {
   messageKeys,
   getThreads,
   sendMessage,
   markThreadRead,
   QUICK_QUESTIONS,
-  type MessageDraft,
 } from './api/messagesApi'
 export { useThreadMessages } from './api/useThreadMessages'
 export { mergeMessages } from './lib/mergeMessages'
