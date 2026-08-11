@@ -9,11 +9,11 @@ export {
   dissolveChainsWithItem,
   type ChainDecision,
 } from './api/chainApi'
+// `displayName` и `isNeighbour` наружу не отдаём: подпись участника и выделение соседа —
+// дело самих карточек цепочки, а они живут здесь же.
 export {
   findMe,
-  displayName,
   findNeighbours,
-  isNeighbour,
   findDecliner,
   needsMyAction,
   countConfirmed,
