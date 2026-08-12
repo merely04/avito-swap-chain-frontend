@@ -6,11 +6,14 @@
  * OpenAPI spec version: 0.8.0
  */
 
-export type ListUserItemsParams = {
+export type ListUserReviewsParams = {
 /**
  * @minimum 1
  * @maximum 100
  */
 limit?: number;
+/**
+ * Review ID returned as nextCursor by the previous page.
+ */
 cursor?: string;
 };

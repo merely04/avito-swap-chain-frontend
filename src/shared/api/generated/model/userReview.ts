@@ -7,12 +7,17 @@
  */
 import type { UserSummary } from './userSummary';
 
-export interface ChatMessage {
+export interface UserReview {
   id: number;
   chainId: number;
-  sender: UserSummary;
-  recipient: UserSummary;
-  clientMessageId: string;
-  text: string;
+  author: UserSummary;
+  targetUserId: number;
+  /**
+     * @minimum 1
+     * @maximum 5
+     */
+  rating: number;
+  /** @nullable */
+  text?: string | null;
   createdAt: string;
 }

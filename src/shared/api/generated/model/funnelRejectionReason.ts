@@ -5,10 +5,10 @@
  * Shared REST and realtime contract for the swap-chain MVP.
  * OpenAPI spec version: 0.8.0
  */
-import type { ChatThread } from './chatThread';
+import type { FunnelRejectionReasonReason } from './funnelRejectionReasonReason';
 
-export interface ChatThreadList {
-  threads: ChatThread[];
+export interface FunnelRejectionReason {
+  reason: FunnelRejectionReasonReason;
   /** @minimum 0 */
-  totalUnreadCount: number;
+  count: number;
 }

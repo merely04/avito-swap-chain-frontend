@@ -5,10 +5,9 @@
  * Shared REST and realtime contract for the swap-chain MVP.
  * OpenAPI spec version: 0.8.0
  */
+import type { UserReview } from './userReview';
 
-export type HealthResponseStatus = typeof HealthResponseStatus[keyof typeof HealthResponseStatus];
-
-
-export const HealthResponseStatus = {
-  ok: 'ok',
-} as const;
+export interface UserReviewList {
+  reviews: UserReview[];
+  nextCursor?: string;
+}

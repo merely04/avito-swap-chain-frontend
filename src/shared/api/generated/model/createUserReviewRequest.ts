@@ -6,15 +6,14 @@
  * OpenAPI spec version: 0.8.0
  */
 
-export interface CreateUserRequest {
+export interface CreateUserReviewRequest {
+  /** @minimum 1 */
+  targetUserId: number;
   /**
-     * @minLength 1
-     * @maxLength 100
+     * @minimum 1
+     * @maximum 5
      */
-  username: string;
-  /**
-     * @minLength 10
-     * @maxLength 32
-     */
-  phone: string;
+  rating: number;
+  /** @maxLength 1000 */
+  text?: string;
 }
