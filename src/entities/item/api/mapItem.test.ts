@@ -7,7 +7,7 @@ const apiItem = (over: Partial<ApiItem> = {}): ApiItem => ({
   userId: 1,
   offerTitle: 'Горный велосипед',
   offerDescription: 'Спорт и отдых, хорошее',
-  wantDescription: 'Игровая приставка',
+  wishes: [{ id: 1, categoryId: 3, description: 'Игровая приставка' }],
   imageUrls: ['/mock/items/bike.jpg'],
   status: 'MATCHING',
   createdAt: '2026-08-09T10:00:00Z',
@@ -16,28 +16,32 @@ const apiItem = (over: Partial<ApiItem> = {}): ApiItem => ({
 })
 
 describe('mapItem — вещь из контракта в нашу модель', () => {
-  it('желание одной строкой разворачивается в вариант', () => {
+  it('желание из контракта становится вариантом нашей модели', () => {
     expect(mapItem(apiItem()).wish).toEqual([{ category: '', description: 'Игровая приставка' }])
   })
 
   it('пустое желание — это отсутствие вариантов, а не вариант с пустым текстом', () => {
-    expect(mapItem(apiItem({ wantDescription: '' })).wish).toEqual([])
+    expect(mapItem(apiItem({ wishes: [] })).wish).toEqual([])
   })
 
-  // Регрессия: варианты уезжают на бэкенд склеенными через « или », и пока разбора обратно
-  // не было, правка объявления открывалась с одним слипшимся полем — человек терял всё,
-  // что указал, кроме первой строки.
-  it('склеенное желание разбирается обратно в отдельные варианты', () => {
-    const wish = mapItem(apiItem({ wantDescription: 'Приставка или велосипед или гитара' })).wish
+  // Регрессия: пока контракт хранил желание одной строкой, варианты склеивались через
+  // « или » и правка объявления открывалась с одним слипшимся полем. Теперь их отдаёт
+  // сам бэкенд, и каждый вариант должен остаться отдельной строкой формы.
+  it('несколько вариантов желания остаются отдельными', () => {
+    const wish = mapItem(
+      apiItem({
+        wishes: [
+          { id: 1, categoryId: 3, description: 'Приставка' },
+          { id: 2, categoryId: 4, description: 'Велосипед' },
+          { id: 3, categoryId: 5, description: 'Гитара' },
+        ],
+      }),
+    ).wish
 
-    expect(wish.map((variant) => variant.description)).toEqual([
-      'Приставка',
-      'велосипед',
-      'гитара',
-    ])
+    expect(wish.map((variant) => variant.description)).toEqual(['Приставка', 'Велосипед', 'Гитара'])
   })
 
-  it('категории и состояния в контракте нет — не выдумываем их', () => {
+  it('состояния вещи в контракте нет — не выдумываем его', () => {
     const item = mapItem(apiItem())
 
     expect(item.category).toBe('')
