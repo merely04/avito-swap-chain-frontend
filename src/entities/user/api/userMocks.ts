@@ -23,6 +23,9 @@ function toProfile(id: string): Profile {
     registeredAt: REGISTERED_AT,
     rating: persona.rating,
     reviews: persona.reviews,
+    // Завершённые обмены на моках выводим из отзывов: каждый оставляют после закрытой
+    // сделки, поэтому число обменов не может быть меньше — и выдумывать его отдельно незачем.
+    completedExchanges: persona.reviews,
   }
 }
 
