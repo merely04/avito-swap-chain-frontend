@@ -22,5 +22,4 @@ export type {
   ItemCondition,
   RecognitionStage,
   RecognizedItem,
-  Wish,
 } from './model/types'

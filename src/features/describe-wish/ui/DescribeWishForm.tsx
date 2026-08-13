@@ -1,20 +1,18 @@
 import { useRef, useState, type SubmitEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { itemKeys, suggestWish, type GivenItem, type Wish } from '@/entities/item'
+import { itemKeys, suggestWish, type GivenItem } from '@/entities/item'
 import { Button, IconClose, IconPlus, Input } from '@/shared/ui'
 
 /** Строка формы: вариант желания + стабильный ключ, чтобы удаление не путало поля React. */
 interface WishRow {
   key: number
   description: string
-  /** Категория известна, только когда вариант пришёл из подсказки; руками её не спрашиваем. */
-  category: string
 }
 
 /** Больше пяти вариантов человек уже не держит в голове, а форма превращается в простыню. */
 const MAX_VARIANTS = 5
 
-const emptyRow = (key: number): WishRow => ({ key, category: '', description: '' })
+const emptyRow = (key: number): WishRow => ({ key, description: '' })
 
 interface DescribeWishFormProps {
   /** Что человек отдаёт: по названию и категории собираются подсказки. */
@@ -23,14 +21,14 @@ interface DescribeWishFormProps {
    * Уже сохранённое желание. При правке форма открывается с ним: иначе «поменять один
    * вариант» означало бы набрать заново все, и человек терял бы то, что уже указал.
    */
-  initial?: Wish[]
+  initial?: string[]
   submitLabel: string
   pendingLabel: string
   /**
    * Как сохранить желание. Форма одна на оба входа в сервис — публикацию новой вещи
    * и включение обмена у уже размещённого объявления; отличается только сохранение.
    */
-  onSubmit: (wish: Wish[]) => Promise<unknown>
+  onSubmit: (wish: string[]) => Promise<unknown>
   onDone: () => void
 }
 
@@ -52,7 +50,9 @@ export function DescribeWishForm({
   onDone,
 }: DescribeWishFormProps) {
   const [rows, setRows] = useState<WishRow[]>(
-    initial?.length ? initial.map((wish, index) => ({ ...wish, key: index })) : [emptyRow(0)],
+    initial?.length
+      ? initial.map((description, index) => ({ description, key: index }))
+      : [emptyRow(0)],
   )
   // Ключи новых строк продолжают занятые: совпадение спутало бы React поля местами.
   const nextKey = useRef(rows.length)
@@ -60,16 +60,13 @@ export function DescribeWishForm({
 
   // Пустые строки не сохраняем: добавить вариант и передумать — нормальный ход.
   const filled = rows
-    .map(({ category, description }) => ({ category, description: description.trim() }))
-    .filter((wish) => wish.description !== '')
+    .map((row) => row.description.trim())
+    .filter((description) => description !== '')
 
   // Подсказки желания — из поисков и избранного человека, см. `suggestWish`. Уже выбранные
   // варианты уходят из подсказок, поэтому они и лежат в ключе запроса.
   const { data: suggestions = [] } = useQuery({
-    queryKey: itemKeys.suggestions(
-      give.title,
-      filled.map((wish) => wish.description),
-    ),
+    queryKey: itemKeys.suggestions(give.title, filled),
     queryFn: () => suggestWish(give, filled),
     placeholderData: (previous) => previous,
   })
@@ -82,21 +79,21 @@ export function DescribeWishForm({
     },
   })
 
-  const patch = (key: number, part: Partial<Wish>) =>
-    setRows((prev) => prev.map((row) => (row.key === key ? { ...row, ...part } : row)))
+  const setDescription = (key: number, description: string) =>
+    setRows((prev) => prev.map((row) => (row.key === key ? { ...row, description } : row)))
 
   // Есть куда положить ещё один вариант: свободная строка или место под новую.
   const hasRoom = rows.length < MAX_VARIANTS || rows.some((row) => row.description.trim() === '')
 
   /** Подсказка занимает первую пустую строку, а если пустых нет — становится новым вариантом. */
-  const addSuggestion = (suggestion: Wish) => {
+  const addSuggestion = (description: string) => {
     const key = nextKey.current++
 
     setRows((prev) => {
       const empty = prev.find((row) => row.description.trim() === '')
-      if (empty) return prev.map((row) => (row.key === empty.key ? { ...row, ...suggestion } : row))
+      if (empty) return prev.map((row) => (row.key === empty.key ? { ...row, description } : row))
 
-      return prev.length < MAX_VARIANTS ? [...prev, { ...suggestion, key }] : prev
+      return prev.length < MAX_VARIANTS ? [...prev, { description, key }] : prev
     })
   }
 
@@ -114,7 +111,7 @@ export function DescribeWishForm({
           <div key={row.key} className="flex items-center gap-2">
             <Input
               value={row.description}
-              onChange={(event) => patch(row.key, { description: event.target.value })}
+              onChange={(event) => setDescription(row.key, event.target.value)}
               aria-label={index === 0 ? 'Что хотите взамен' : `Вариант ${index + 1}`}
               placeholder={index === 0 ? 'Например, игровая приставка' : 'Ещё вариант'}
             />
@@ -144,13 +141,13 @@ export function DescribeWishForm({
           <div className="flex flex-wrap gap-1.5">
             {suggestions.map((suggestion) => (
               <button
-                key={suggestion.description}
+                key={suggestion}
                 type="button"
                 onClick={() => addSuggestion(suggestion)}
                 className="inline-flex cursor-pointer items-center gap-1 rounded-chip bg-brand-soft px-2.5 py-1.5 font-sans text-[12.5px] font-semibold text-brand outline-offset-2 transition-colors hover:bg-brand hover:text-on-brand focus-visible:outline-2 focus-visible:outline-brand"
               >
                 <IconPlus size={13} />
-                {suggestion.description}
+                {suggestion}
               </button>
             ))}
           </div>

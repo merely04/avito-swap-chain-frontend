@@ -5,7 +5,6 @@ import type {
   RecognitionStage,
   RecognizeOptions,
   RecognizedItem,
-  Wish,
 } from '../model/types'
 
 /**
@@ -41,10 +40,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Спорт и отдых',
       condition: 'good',
       status: 'reserved',
-      wish: [
-        { category: 'Электроника', description: 'Игровая приставка PlayStation' },
-        { category: 'Электроника', description: 'Плёночный фотоаппарат' },
-      ],
+      wish: ['Игровая приставка PlayStation', 'Плёночный фотоаппарат'],
     },
     {
       id: '5',
@@ -53,7 +49,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Дом и дача',
       condition: 'good',
       status: 'reserved',
-      wish: [{ category: 'Транспорт', description: 'Электросамокат' }],
+      wish: ['Электросамокат'],
     },
     // Единственная вещь без `photoUrl` — намеренно: объявление без фото на Авито обычное дело,
     // и на ней видно, что плейсхолдер `ItemCard` работает.
@@ -63,11 +59,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Спорт и отдых',
       condition: 'used',
       status: 'searching',
-      wish: [
-        { category: 'Электроника', description: 'Умные часы' },
-        { category: 'Электроника', description: 'Фитнес-браслет' },
-        { category: 'Спорт и отдых', description: 'Беговая дорожка' },
-      ],
+      wish: ['Умные часы', 'Фитнес-браслет', 'Беговая дорожка'],
     },
   ],
   [MARK.id]: [
@@ -87,7 +79,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Аудио',
       condition: 'good',
       status: 'reserved',
-      wish: [{ category: 'Спорт и отдых', description: 'Горный велосипед' }],
+      wish: ['Горный велосипед'],
     },
     {
       id: '22',
@@ -96,10 +88,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Электроника',
       condition: 'new',
       status: 'searching',
-      wish: [
-        { category: 'Электроника', description: 'Монитор 27"' },
-        { category: 'Электроника', description: 'Графический планшет' },
-      ],
+      wish: ['Монитор 27"', 'Графический планшет'],
     },
   ],
   [LENA.id]: [
@@ -119,7 +108,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Электроника',
       condition: 'used',
       status: 'reserved',
-      wish: [{ category: 'Аудио', description: 'Наушники' }],
+      wish: ['Наушники'],
     },
     {
       id: '33',
@@ -128,10 +117,7 @@ let itemsByOwner: Record<string, Item[]> = {
       category: 'Дом и дача',
       condition: 'good',
       status: 'searching',
-      wish: [
-        { category: 'Хобби и творчество', description: 'Виниловый проигрыватель' },
-        { category: 'Дом и дача', description: 'Кофеварка' },
-      ],
+      wish: ['Виниловый проигрыватель', 'Кофеварка'],
     },
   ],
 }
@@ -178,7 +164,7 @@ export function itemsOfOthers(): Item[] {
 }
 
 /** Желание уже очищено вызывающим: пустые и повторяющиеся варианты отсеивает `itemsApi`. */
-export async function create(draft: ItemDraft, wish: Wish[]): Promise<Item> {
+export async function create(draft: ItemDraft, wish: string[]): Promise<Item> {
   await delay(400)
 
   const { photoFile: _, ...fields } = draft
@@ -190,7 +176,7 @@ export async function create(draft: ItemDraft, wish: Wish[]): Promise<Item> {
 
 export async function edit(
   id: string,
-  wish: Wish[],
+  wish: string[],
   description?: string,
   title?: string,
 ): Promise<Item> {
