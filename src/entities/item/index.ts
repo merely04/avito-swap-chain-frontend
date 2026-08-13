@@ -1,4 +1,5 @@
 export { DescriptionField } from './ui/DescriptionField'
+export { GivenItemCard } from './ui/GivenItemCard'
 export { ItemCard } from './ui/ItemCard'
 export { ItemStatusLabel } from './ui/ItemStatusLabel'
 export { WishCard } from './ui/WishCard'
