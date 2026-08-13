@@ -74,6 +74,13 @@ export const IconImage = (props: IconProps) => (
   </Icon>
 )
 
+export const IconSearch = (props: IconProps) => (
+  <Icon strokeWidth={2} {...props}>
+    <circle cx="11" cy="11" r="7" />
+    <path d="M16.5 16.5L21 21" />
+  </Icon>
+)
+
 /** Правка блока: карандаш ведёт к полю, а не открывает новый экран. */
 export const IconPencil = (props: IconProps) => (
   <Icon strokeWidth={1.8} {...props}>
