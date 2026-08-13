@@ -12,13 +12,14 @@ export {
 } from './api/itemsApi'
 export { categoryKeys, getCategories, matchCategory } from './api/categoriesApi'
 export { suggestWish, type GivenItem } from './api/suggestWish'
-export { recognizeItem } from './api/recognizeItem'
+export { recognizeItem, isAborted } from './api/recognizeItem'
 export { CATEGORIES, CONDITIONS, CONDITION_LABEL } from './model/dictionaries'
 export type {
   Item,
   ItemDraft,
   ItemStatus,
   ItemCondition,
+  RecognitionStage,
   RecognizedItem,
   Wish,
 } from './model/types'

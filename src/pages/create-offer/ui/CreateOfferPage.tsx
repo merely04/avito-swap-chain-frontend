@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createItem } from '@/entities/item'
-import { AddItemForm, type ItemFormValues } from '@/features/add-item'
+import { AddItemFlow, type ItemFormValues } from '@/features/add-item'
 import { DescribeWishForm } from '@/features/describe-wish'
 import { Screen, ScreenHeader, Status } from '@/shared/ui'
 
@@ -37,7 +37,7 @@ export function CreateOfferPage() {
             onDone={() => navigate('/')}
           />
         ) : (
-          <AddItemForm
+          <AddItemFlow
             initial={values}
             onSubmit={(next) => {
               setValues(next)

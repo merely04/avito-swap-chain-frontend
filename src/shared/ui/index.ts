@@ -20,6 +20,8 @@ export {
   IconArrowRight,
   IconChevronLeft,
   IconImage,
+  IconPencil,
+  IconSparkle,
   IconBox,
   IconHeart,
   IconBell,
