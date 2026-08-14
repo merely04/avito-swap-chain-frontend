@@ -14,6 +14,7 @@ import { BlockUser } from '@/features/block-user'
 import { ReportMessage } from '@/features/report-message'
 import { MessageComposer } from '@/features/send-message'
 import { IconBox, Notice, Screen, ScreenHeader } from '@/shared/ui'
+import { isBackendConnected } from '@/shared/config/backend'
 import { asset } from '@/shared/lib'
 
 /**
@@ -98,8 +99,9 @@ export function ThreadPage() {
                 message.author === 'them' ? <ReportMessage messageId={message.id} /> : null
               }
             />
-            {/* Служебный канал сервиса — не диалог: отвечать в него некому. */}
-            {!isServiceThread(thread) && (
+            {/* В поддержку писать можно: с контракта 0.11.0 за тредом стоит настоящий
+                разговор с модератором. На моках отвечать в него по-прежнему некому. */}
+            {(!isServiceThread(thread) || isBackendConnected) && (
               <MessageComposer thread={thread} empty={messages.length === 0} />
             )}
 
